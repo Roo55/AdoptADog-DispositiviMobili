@@ -2,18 +2,25 @@ package com.example.adoptadog.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.adoptadog.R;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.ui.details.DogDetailsActivity;
@@ -41,23 +48,37 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
     public void onBindViewHolder(@NonNull DogViewHolder holder, int position) {
         Dog dog = dogList.get(position);
 
-        // Set the dog's name
         holder.tvDogName.setText(dog.getName());
 
-        // Load the dog's image
-        Glide.with(context)
+        holder.progressBar.setVisibility(View.VISIBLE);
+
+        Glide.with(holder.itemView.getContext())
                 .load(dog.getImageUrl())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .listener(new com.bumptech.glide.request.RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
                 .into(holder.backgroundImageView);
 
-        // Handle the "More Information" button
         holder.btnMoreInfo.setOnClickListener(v -> {
-            // Example: Open a new activity with dog details
+
             Intent intent = new Intent(context, DogDetailsActivity.class);
-            intent.putExtra("dogId", dog.getId()); // Pass dog's ID to the next screen
+            intent.putExtra("dogId", dog.getId());
             context.startActivity(intent);
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -68,12 +89,14 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         TextView tvDogName;
         ImageView backgroundImageView;
         Button btnMoreInfo;
+        ProgressBar progressBar;
 
         public DogViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDogName = itemView.findViewById(R.id.tvDogName);
             backgroundImageView = itemView.findViewById(R.id.backgroundImageView);
             btnMoreInfo = itemView.findViewById(R.id.btnMoreInfo);
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 }
