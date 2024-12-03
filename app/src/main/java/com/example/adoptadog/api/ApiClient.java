@@ -13,7 +13,7 @@ import retrofit2.Response;
 
 public class ApiClient {
 
-    private static final String BASE_URL = "https://api.petfinder.com/v2/";
+    private static final String BASE_URL = "https://huachitos.cl/";
     private static Retrofit retrofit;
 
     public static Retrofit getClient() {
@@ -26,16 +26,17 @@ public class ApiClient {
         return retrofit;
     }
 
-    public static void fetchDogsFromApi(String token, final ApiCallback callback) {
+    public static void fetchDogsFromApi(final ApiCallback callback) {
         ApiService apiService = getClient().create(ApiService.class);
 
-        Call<DogResponse> call = apiService.getDogs("Bearer " + token);
+        // Call the endpoint to fetch dogs
+        Call<DogResponse> call = apiService.getDogs();
 
         call.enqueue(new Callback<DogResponse>() {
             @Override
             public void onResponse(Call<DogResponse> call, Response<DogResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body().getAnimals());
+                    callback.onSuccess(response.body().getDogs());
                 } else {
                     callback.onFailure("Error: " + response.message());
                 }

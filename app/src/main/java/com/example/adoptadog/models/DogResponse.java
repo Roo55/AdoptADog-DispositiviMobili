@@ -1,16 +1,19 @@
 package com.example.adoptadog.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class DogResponse {
-    private List<Dog> animals;
+    @SerializedName("data")
+    private List<Dog> dogs;
 
-    // Getters y Setters
-    public List<Dog> getAnimals() {
-        return animals;
+    // Getter and Setter
+    public List<Dog> getDogs() {
+        return dogs;
     }
 
-    public void setAnimals(List<Dog> animals) {
-        this.animals = animals;
+    public void setDogs(List<Dog> dog) {
+        this.dogs = dogs;
     }
 }
