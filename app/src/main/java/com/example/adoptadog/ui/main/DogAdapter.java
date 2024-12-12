@@ -48,8 +48,16 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
     public void onBindViewHolder(@NonNull DogViewHolder holder, int position) {
         Dog dog = dogList.get(position);
 
+        // Nombre del perro
         holder.tvDogName.setText(dog.getName());
 
+        // Descripción física como raza
+        holder.tvDogBreed.setText(dog.getPhysicalDescription());
+
+        // Mostrar la edad del perro
+        holder.tvDogAge.setText(dog.getAge() + " years old");
+
+        // Mostrar la imagen del perro
         holder.progressBar.setVisibility(View.VISIBLE);
 
         Glide.with(holder.itemView.getContext())
@@ -71,13 +79,14 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
                 })
                 .into(holder.backgroundImageView);
 
-        holder.btnMoreInfo.setOnClickListener(v -> {
-
+        // Evento click en la tarjeta completa
+        holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DogDetailsActivity.class);
             intent.putExtra("dogId", dog.getId());
             context.startActivity(intent);
         });
     }
+
 
 
     @Override
@@ -90,13 +99,16 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         ImageView backgroundImageView;
         Button btnMoreInfo;
         ProgressBar progressBar;
+        TextView tvDogBreed;
+        TextView tvDogAge;
 
         public DogViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDogName = itemView.findViewById(R.id.tvDogName);
             backgroundImageView = itemView.findViewById(R.id.backgroundImageView);
-            btnMoreInfo = itemView.findViewById(R.id.btnMoreInfo);
             progressBar = itemView.findViewById(R.id.progressBar);
+            tvDogBreed = itemView.findViewById(R.id.tvDogBreed);
+            tvDogAge = itemView.findViewById(R.id.tvDogAge);
         }
     }
 }
