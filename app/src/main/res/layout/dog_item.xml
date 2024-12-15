@@ -12,19 +12,26 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Imagen del perro -->
-        <ImageView
-            android:id="@+id/backgroundImageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/image_background_shape" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/imageCardView"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Nombre del perro -->
+            <ImageView
+                android:id="@+id/backgroundImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvDogName"
             android:layout_width="0dp"
@@ -32,23 +39,24 @@
             android:text="Dog Name"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:fontFamily="@font/leaguespartan"
-            android:fontVariationSettings="'wght' 700"
+            android:fontFamily="@font/lexend"
+            android:layout_marginStart="16dp"
             android:textColor="@android:color/black"
-            app:layout_constraintStart_toEndOf="@id/backgroundImageView"
+            app:layout_constraintStart_toEndOf="@id/imageCardView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tvDogBreed" /> <!-- Agregamos restricción para separación -->
+            app:layout_constraintBottom_toTopOf="@id/tvDogBreed" />
 
-        <!-- Raza del perro -->
         <TextView
             android:id="@+id/tvDogBreed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Dog Breed"
             android:textSize="14sp"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/lexend"
             android:textColor="@android:color/darker_gray"
-            app:layout_constraintStart_toEndOf="@id/backgroundImageView"
+            app:layout_constraintStart_toEndOf="@id/imageCardView"
             app:layout_constraintTop_toBottomOf="@id/tvDogName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tvDogAge" /> <!-- Agregamos separación entre raza y edad -->
@@ -58,10 +66,11 @@
             android:id="@+id/tvDogAge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="2 years old"
             android:textSize="14sp"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/lexend"
             android:textColor="@android:color/darker_gray"
-            app:layout_constraintStart_toEndOf="@id/backgroundImageView"
+            app:layout_constraintStart_toEndOf="@id/imageCardView"
             app:layout_constraintTop_toBottomOf="@id/tvDogBreed"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -72,10 +81,10 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="@id/backgroundImageView"
-            app:layout_constraintBottom_toBottomOf="@id/backgroundImageView"
-            app:layout_constraintStart_toStartOf="@id/backgroundImageView"
-            app:layout_constraintEnd_toEndOf="@id/backgroundImageView" />
+            app:layout_constraintTop_toTopOf="@id/imageCardView"
+            app:layout_constraintBottom_toBottomOf="@id/imageCardView"
+            app:layout_constraintStart_toStartOf="@id/imageCardView"
+            app:layout_constraintEnd_toEndOf="@id/imageCardView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

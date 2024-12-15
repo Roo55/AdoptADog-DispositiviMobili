@@ -3,6 +3,7 @@ package com.example.adoptadog.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,10 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.adoptadog.R;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.ui.details.DogDetailsActivity;
+import com.google.mlkit.nl.translate.TranslateLanguage;
+import com.google.mlkit.nl.translate.Translation;
+import com.google.mlkit.nl.translate.Translator;
+import com.google.mlkit.nl.translate.TranslatorOptions;
 
 import java.util.List;
 
@@ -31,10 +36,12 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
 
     private List<Dog> dogList;
     private Context context;
+    private Translator translator;
 
     public DogAdapter(List<Dog> dogList, Context context) {
         this.dogList = dogList;
         this.context = context;
+        setupTranslator(); // Configuración inicial del traductor
     }
 
     @NonNull
@@ -48,18 +55,17 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
     public void onBindViewHolder(@NonNull DogViewHolder holder, int position) {
         Dog dog = dogList.get(position);
 
-        // Nombre del perro
         holder.tvDogName.setText(dog.getName());
 
-        // Descripción física como raza
-        holder.tvDogBreed.setText(dog.getPhysicalDescription());
+        // Traducir descripción física del perro
+        String description = cleanHtmlTags(dog.getPhysicalDescription());
+        translateText(description, translatedText -> holder.tvDogBreed.setText(translatedText));
 
-        // Mostrar la edad del perro
-        holder.tvDogAge.setText(dog.getAge() + " years old");
+        // Mostrar edad formateada
+        holder.tvDogAge.setText(formatAge(dog.getAge()));
 
         // Mostrar la imagen del perro
         holder.progressBar.setVisibility(View.VISIBLE);
-
         Glide.with(holder.itemView.getContext())
                 .load(dog.getImageUrl())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -79,7 +85,7 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
                 })
                 .into(holder.backgroundImageView);
 
-        // Evento click en la tarjeta completa
+        // Click en el elemento
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DogDetailsActivity.class);
             intent.putExtra("dogId", dog.getId());
@@ -87,17 +93,61 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         });
     }
 
-
-
     @Override
     public int getItemCount() {
         return dogList.size();
     }
 
+    private void setupTranslator() {
+        TranslatorOptions options =
+                new TranslatorOptions.Builder()
+                        .setSourceLanguage(TranslateLanguage.SPANISH)
+                        .setTargetLanguage(TranslateLanguage.ENGLISH)
+                        .build();
+
+        translator = Translation.getClient(options);
+
+        // Descargar el modelo de traducción
+        translator.downloadModelIfNeeded()
+                .addOnSuccessListener(unused -> Log.d("MLKit", "Modelo de traducción descargado."))
+                .addOnFailureListener(e -> Log.e("MLKit", "Error al descargar el modelo: " + e.getMessage()));
+    }
+
+    private void translateText(String text, OnTranslationCompleteListener listener) {
+        if (translator == null) {
+            Log.e("MLKit", "Traductor no inicializado.");
+            listener.onTranslationComplete(text); // Enviar el texto original si hay un problema
+            return;
+        }
+
+        translator.translate(text)
+                .addOnSuccessListener(listener::onTranslationComplete)
+                .addOnFailureListener(e -> {
+                    Log.e("MLKit", "Error en la traducción: " + e.getMessage());
+                    listener.onTranslationComplete(text); // Enviar el texto original en caso de error
+                });
+    }
+
+    private String cleanHtmlTags(String text) {
+        if (text == null) return "";
+        return text.replaceAll("<p>", "").replaceAll("</p>", "").trim();
+    }
+
+    private String formatAge(String age) {
+        if (age == null) return "";
+        if (age.contains("Meses")) {
+            return age.replace("Meses", "Months");
+        } else if (age.contains("Año")) {
+            return age.replace("Año", "Year");
+        } else if (age.contains("Años")) {
+            return age.replace("Años", "Years");
+        }
+        return age;
+    }
+
     public static class DogViewHolder extends RecyclerView.ViewHolder {
         TextView tvDogName;
         ImageView backgroundImageView;
-        Button btnMoreInfo;
         ProgressBar progressBar;
         TextView tvDogBreed;
         TextView tvDogAge;
@@ -110,5 +160,10 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
             tvDogBreed = itemView.findViewById(R.id.tvDogBreed);
             tvDogAge = itemView.findViewById(R.id.tvDogAge);
         }
+    }
+
+    // Interfaz para devolver la traducción
+    interface OnTranslationCompleteListener {
+        void onTranslationComplete(String translatedText);
     }
 }
