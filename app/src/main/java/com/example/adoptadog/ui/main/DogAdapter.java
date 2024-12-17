@@ -41,7 +41,7 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
     public DogAdapter(List<Dog> dogList, Context context) {
         this.dogList = dogList;
         this.context = context;
-        setupTranslator(); // Configuración inicial del traductor
+        setupTranslator();
     }
 
     @NonNull
@@ -57,14 +57,19 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
 
         holder.tvDogName.setText(dog.getName());
 
-        // Traducir descripción física del perro
         String description = cleanHtmlTags(dog.getPhysicalDescription());
         translateText(description, translatedText -> holder.tvDogBreed.setText(translatedText));
 
-        // Mostrar edad formateada
         holder.tvDogAge.setText(formatAge(dog.getAge()));
 
-        // Mostrar la imagen del perro
+        if ("macho".equalsIgnoreCase(dog.getGender())) {
+            holder.ivGenderIcon.setImageResource(R.drawable.ic_macho);
+            holder.ivGenderIcon.setContentDescription(context.getString(R.string.gender_male_icon));
+        } else if ("hembra".equalsIgnoreCase(dog.getGender())) {
+            holder.ivGenderIcon.setImageResource(R.drawable.ic_hembra);
+            holder.ivGenderIcon.setContentDescription(context.getString(R.string.gender_female_icon));
+        }
+
         holder.progressBar.setVisibility(View.VISIBLE);
         Glide.with(holder.itemView.getContext())
                 .load(dog.getImageUrl())
@@ -85,7 +90,6 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
                 })
                 .into(holder.backgroundImageView);
 
-        // Click en el elemento
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DogDetailsActivity.class);
             intent.putExtra("dogId", dog.getId());
@@ -107,24 +111,24 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
 
         translator = Translation.getClient(options);
 
-        // Descargar el modelo de traducción
+
         translator.downloadModelIfNeeded()
-                .addOnSuccessListener(unused -> Log.d("MLKit", "Modelo de traducción descargado."))
-                .addOnFailureListener(e -> Log.e("MLKit", "Error al descargar el modelo: " + e.getMessage()));
+                .addOnSuccessListener(unused -> Log.d("MLKit", "Translation model downloaded"))
+                .addOnFailureListener(e -> Log.e("MLKit", "Error downloading the model: " + e.getMessage()));
     }
 
     private void translateText(String text, OnTranslationCompleteListener listener) {
         if (translator == null) {
-            Log.e("MLKit", "Traductor no inicializado.");
-            listener.onTranslationComplete(text); // Enviar el texto original si hay un problema
+            Log.e("MLKit", "Translator not initialized.");
+            listener.onTranslationComplete(text);
             return;
         }
 
         translator.translate(text)
                 .addOnSuccessListener(listener::onTranslationComplete)
                 .addOnFailureListener(e -> {
-                    Log.e("MLKit", "Error en la traducción: " + e.getMessage());
-                    listener.onTranslationComplete(text); // Enviar el texto original en caso de error
+                    Log.e("MLKit", "Translation error: " + e.getMessage());
+                    listener.onTranslationComplete(text);
                 });
     }
 
@@ -151,6 +155,7 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         ProgressBar progressBar;
         TextView tvDogBreed;
         TextView tvDogAge;
+        ImageView ivGenderIcon;
 
         public DogViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -159,10 +164,11 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
             progressBar = itemView.findViewById(R.id.progressBar);
             tvDogBreed = itemView.findViewById(R.id.tvDogBreed);
             tvDogAge = itemView.findViewById(R.id.tvDogAge);
+            ivGenderIcon = itemView.findViewById(R.id.ivGenderIcon);
         }
     }
 
-    // Interfaz para devolver la traducción
+
     interface OnTranslationCompleteListener {
         void onTranslationComplete(String translatedText);
     }
