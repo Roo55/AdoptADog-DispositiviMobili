@@ -1,5 +1,6 @@
 package com.example.adoptadog.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adoptadog.R;
+import com.example.adoptadog.models.Dog;
+import com.example.adoptadog.ui.details.DogDetailActivity;
 import com.example.adoptadog.viewmodels.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,23 +25,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize RecyclerView
         dogListRecyclerView = findViewById(R.id.dogList);
         dogListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize ViewModel
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // Observe the dogs LiveData from the ViewModel
         mainViewModel.getDogs().observe(this, dogs -> {
             if (dogs != null) {
                 // Set up the adapter with the retrieved dogs
-                dogAdapter = new DogAdapter(dogs, MainActivity.this);
+                dogAdapter = new DogAdapter(dogs, MainActivity.this, this::onDogItemClick);
                 dogListRecyclerView.setAdapter(dogAdapter);
             }
         });
 
-        // Observe the error LiveData from the ViewModel
         mainViewModel.getError().observe(this, error -> {
             if (error != null) {
                 // Display a toast with the error message
@@ -48,5 +47,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Fetch dogs from the API via the ViewModel
         mainViewModel.fetchDogsFromApi();
+    }
+
+    // Handle click event on dog item in RecyclerView
+    private void onDogItemClick(Dog dog) {
+        // Create an Intent to navigate to DogDetailActivity
+        Intent intent = new Intent(MainActivity.this, DogDetailActivity.class);
+
+        // Send dog data via Intent
+        intent.putExtra("dogName", dog.getName());
+        intent.putExtra("dogPersonality", dog.getPersonalityDescription());
+        intent.putExtra("dogAge", dog.getAge());
+        intent.putExtra("dogImage", dog.getImageUrl());
+        intent.putExtra("dogGender", dog.getGender());
+
+        // Start the DogDetailActivity
+        startActivity(intent);
     }
 }

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,10 +20,9 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 import com.example.adoptadog.R;
 import com.example.adoptadog.models.Dog;
-import com.example.adoptadog.ui.details.DogDetailsActivity;
+import com.example.adoptadog.ui.details.DogDetailActivity;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
@@ -37,10 +35,12 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
     private List<Dog> dogList;
     private Context context;
     private Translator translator;
+    private DogItemClickListener dogItemClickListener; // Listener for item clicks
 
-    public DogAdapter(List<Dog> dogList, Context context) {
+    public DogAdapter(List<Dog> dogList, Context context, DogItemClickListener dogItemClickListener) {
         this.dogList = dogList;
         this.context = context;
+        this.dogItemClickListener = dogItemClickListener; // Initialize listener
         setupTranslator();
     }
 
@@ -90,11 +90,7 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
                 })
                 .into(holder.backgroundImageView);
 
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DogDetailsActivity.class);
-            intent.putExtra("dogId", dog.getId());
-            context.startActivity(intent);
-        });
+        holder.itemView.setOnClickListener(v -> dogItemClickListener.onDogItemClick(dog)); // Use listener
     }
 
     @Override
@@ -110,7 +106,6 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
                         .build();
 
         translator = Translation.getClient(options);
-
 
         translator.downloadModelIfNeeded()
                 .addOnSuccessListener(unused -> Log.d("MLKit", "Translation model downloaded"))
@@ -168,6 +163,10 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         }
     }
 
+    // Listener interface for click handling
+    public interface DogItemClickListener {
+        void onDogItemClick(Dog dog);
+    }
 
     interface OnTranslationCompleteListener {
         void onTranslationComplete(String translatedText);
