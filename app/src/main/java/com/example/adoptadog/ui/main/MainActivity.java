@@ -2,6 +2,7 @@ package com.example.adoptadog.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,17 +52,27 @@ public class MainActivity extends AppCompatActivity {
 
     // Handle click event on dog item in RecyclerView
     private void onDogItemClick(Dog dog) {
-        // Create an Intent to navigate to DogDetailActivity
-        Intent intent = new Intent(MainActivity.this, DogDetailActivity.class);
+        // Verifica que el dogId sea válido
+        if (dog.getId() != -1) {
+            Log.d("MainActivity", "Selected Dog ID: " + dog.getId());
 
-        // Send dog data via Intent
-        intent.putExtra("dogName", dog.getName());
-        intent.putExtra("dogPersonality", dog.getPersonalityDescription());
-        intent.putExtra("dogAge", dog.getAge());
-        intent.putExtra("dogImage", dog.getImageUrl());
-        intent.putExtra("dogGender", dog.getGender());
+            // Crear un Intent para navegar a DogDetailActivity
+            Intent intent = new Intent(MainActivity.this, DogDetailActivity.class);
 
-        // Start the DogDetailActivity
-        startActivity(intent);
+            // Pasar datos del perro a través del Intent
+            intent.putExtra("dogId", dog.getId());
+            intent.putExtra("dogName", dog.getName());
+            intent.putExtra("dogPersonality", dog.getPersonalityDescription());
+            intent.putExtra("dogAge", dog.getAge());
+            intent.putExtra("dogImage", dog.getImageUrl());
+            intent.putExtra("dogGender", dog.getGender());
+
+            // Iniciar la actividad DogDetailActivity
+            startActivity(intent);
+        } else {
+            Log.e("MainActivity", "Invalid dogId: " + dog.getId());
+            Toast.makeText(MainActivity.this, "Error: Invalid Dog ID", Toast.LENGTH_SHORT).show();
+        }
     }
+
 }

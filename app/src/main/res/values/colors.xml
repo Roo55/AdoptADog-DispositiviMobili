@@ -9,4 +9,9 @@
     <color name="md_theme_light_surface">#FFFFFF</color>
     <color name="md_theme_light_onSurface">#000000</color>
     <color name="md_theme_light_outline">#E0E0E0</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+
+    <color name="dark_gray">#616161</color>
 </resources>

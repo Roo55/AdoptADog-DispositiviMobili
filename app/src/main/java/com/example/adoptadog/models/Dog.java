@@ -1,5 +1,6 @@
 package com.example.adoptadog.models;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
@@ -9,52 +10,67 @@ import com.google.gson.annotations.SerializedName;
 @Entity(tableName = "dogs")
 public class Dog {
 
-    // Room annotation for primary key
     @PrimaryKey
     @NonNull
     @SerializedName("id")
-    private int id; // Unique ID for each dog
+    @ColumnInfo(name = "id")
+    private int id;
 
     @SerializedName("nombre")
+    @ColumnInfo(name = "name")
     private String name;
 
     @SerializedName("tipo")
-    private String type; // Typically "Perro" for dogs
+    @ColumnInfo(name = "type")
+    private String type;
 
     @SerializedName("color")
+    @ColumnInfo(name = "color")
     private String color;
 
     @SerializedName("edad")
+    @ColumnInfo(name = "age")
     private String age;
 
     @SerializedName("estado")
+    @ColumnInfo(name = "status")
     private String status; // E.g., "adopcion"
 
     @SerializedName("genero")
+    @ColumnInfo(name = "gender")
     private String gender; // "macho" or "hembra"
 
     @SerializedName("desc_fisica")
+    @ColumnInfo(name = "physical_description")
     private String physicalDescription;
 
     @SerializedName("desc_personalidad")
+    @ColumnInfo(name = "personality_description")
     private String personalityDescription;
 
     @SerializedName("imagen")
+    @ColumnInfo(name = "image_url")
     private String imageUrl;
 
     @SerializedName("region")
+    @ColumnInfo(name = "region")
     private String region;
 
     @SerializedName("comuna")
+    @ColumnInfo(name = "comuna")
     private String comuna;
 
     @SerializedName("url")
+    @ColumnInfo(name = "details_url")
     private String detailsUrl;
+
+    @ColumnInfo(name = "isFavorite")
+    private boolean isFavorite;
 
     // Constructor
     public Dog(int id, String name, String type, String color, String age, String status,
                String gender, String physicalDescription, String personalityDescription,
-               String imageUrl, String region, String comuna, String detailsUrl) {
+               String imageUrl, String region, String comuna, String detailsUrl, boolean isFavorite) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -68,6 +84,7 @@ public class Dog {
         this.region = region;
         this.comuna = comuna;
         this.detailsUrl = detailsUrl;
+        this.isFavorite = isFavorite;
     }
 
     // Getters and Setters
@@ -174,5 +191,13 @@ public class Dog {
 
     public void setDetailsUrl(String detailsUrl) {
         this.detailsUrl = detailsUrl;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }
