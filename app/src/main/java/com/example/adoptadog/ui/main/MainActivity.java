@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adoptadog.R;
+import com.example.adoptadog.firebase.AuthManager;
 import com.example.adoptadog.models.Dog;
+import com.example.adoptadog.ui.auth.LoginActivity;
 import com.example.adoptadog.ui.details.DogDetailActivity;
 import com.example.adoptadog.viewmodels.MainViewModel;
 
@@ -24,6 +26,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificar si el usuario está autenticado antes de continuar
+        if (AuthManager.getInstance().getCurrentUser() == null) {
+            // Si no está autenticado, redirigir al login
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // Asegúrate de que no se quede en la actividad actual
+            return; // Detener el flujo de la actividad actual
+        }
+
         setContentView(R.layout.activity_main);
 
         dogListRecyclerView = findViewById(R.id.dogList);
@@ -56,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         if (dog.getId() != -1) {
             Log.d("MainActivity", "Selected Dog ID: " + dog.getId());
 
-            // Crear un Intent para navegar a DogDetailActivity
             Intent intent = new Intent(MainActivity.this, DogDetailActivity.class);
 
             // Pasar datos del perro a través del Intent
@@ -74,5 +85,4 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Error: Invalid Dog ID", Toast.LENGTH_SHORT).show();
         }
     }
-
 }
