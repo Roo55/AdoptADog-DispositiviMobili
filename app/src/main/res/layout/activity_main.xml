@@ -7,16 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainActivity">
 
+    <!-- RecyclerView para mostrar los perros -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dogList"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:spanCount="2"
         android:orientation="vertical"
         tools:listitem="@layout/dog_item"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"
         android:layout_height="0dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login); // Vincula este layout con la actividad
+        setContentView(R.layout.activity_login);
 
         // Inicializar vistas
         etEmail = findViewById(R.id.etEmail);
