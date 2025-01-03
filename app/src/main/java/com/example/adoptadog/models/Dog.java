@@ -32,6 +32,10 @@ public class Dog {
     @ColumnInfo(name = "age")
     private String age;
 
+    @SerializedName("esterilizado")
+    @ColumnInfo(name = "sterilized")
+    private int sterilized;
+
     @SerializedName("estado")
     @ColumnInfo(name = "status")
     private String status; // E.g., "adopcion"
@@ -70,7 +74,7 @@ public class Dog {
     // Constructor
     public Dog(int id, String name, String type, String color, String age, String status,
                String gender, String physicalDescription, String personalityDescription,
-               String imageUrl, String region, String comuna, String detailsUrl, boolean isFavorite) {
+               String imageUrl, String region, String comuna, String detailsUrl,int sterilized, boolean isFavorite) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -85,6 +89,7 @@ public class Dog {
         this.comuna = comuna;
         this.detailsUrl = detailsUrl;
         this.isFavorite = isFavorite;
+        this.sterilized = sterilized;
     }
 
     // Getters and Setters
@@ -151,6 +156,14 @@ public class Dog {
 
     public void setPhysicalDescription(String physicalDescription) {
         this.physicalDescription = physicalDescription;
+    }
+
+    public int getSterilized() {
+        return sterilized;
+    }
+
+    public void setSterilized(int sterilized) {
+        this.sterilized = sterilized;
     }
 
     public String getPersonalityDescription() {

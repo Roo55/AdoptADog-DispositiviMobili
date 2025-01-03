@@ -11,7 +11,6 @@ import retrofit2.http.Path;
 
 public interface ApiService {
 
-    // Endpoint to fetch dogs by type (no token needed)
     @GET("api/animales/tipo/perro")
     Call<DogResponse> getDogs();
 }

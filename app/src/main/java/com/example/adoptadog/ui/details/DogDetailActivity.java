@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.adoptadog.R;
@@ -16,110 +15,133 @@ import com.example.adoptadog.database.DogDAO;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.repository.DogRepository;
 import com.google.android.material.button.MaterialButton;
+import com.google.mlkit.nl.translate.TranslateLanguage;
+import com.google.mlkit.nl.translate.Translation;
+import com.google.mlkit.nl.translate.Translator;
+import com.google.mlkit.nl.translate.TranslatorOptions;
 
 public class DogDetailActivity extends AppCompatActivity {
 
     private ImageView ivDogImage;
-    private TextView tvDogName, tvDogPersonality, tvDogAge;
+    private TextView tvDogName, tvDogPersonality, tvDogAge, tvSterilizedStatus;
     private ImageView ivGenderIcon;
     private MaterialButton btnFavorite, btnAdopt;
     private DogDAO dogDao;
     private Dog dog;
+    private Translator translator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dog_detail);
 
-        // Inicializar el DAO usando DatabaseClient
         dogDao = DatabaseClient.getInstance(getApplicationContext()).dogDAO();
 
-        // Inicializar vistas
         ImageView btnBack = findViewById(R.id.btnBack);
         ivDogImage = findViewById(R.id.ivDogImage);
         tvDogName = findViewById(R.id.tvDogName);
         tvDogPersonality = findViewById(R.id.tvDogPersonality);
         tvDogAge = findViewById(R.id.tvDogAge);
         ivGenderIcon = findViewById(R.id.ivGenderIcon);
+        tvSterilizedStatus = findViewById(R.id.tvSterilizedStatus);
         btnFavorite = findViewById(R.id.btnFavorite);
-        Log.d("DogDetailActivity", "Button Favorite initialized");
         btnAdopt = findViewById(R.id.btnAdopt);
 
         btnFavorite.setEnabled(false);
 
+        setupTranslator();
+
         DogRepository dogRepository = new DogRepository(getApplication());
         dogRepository.fetchDogsFromApi();
 
-
-        // Manejar el botón de retroceso
         btnBack.setOnClickListener(v -> finish());
 
-        // Obtener datos del Intent
         Intent intent = getIntent();
         int dogId = intent.getIntExtra("dogId", -1);
 
         if (dogId == -1) {
             Log.e("DogDetailActivity", "No valid dogId received!");
-            finish(); // Cierra la actividad si no hay un ID válido
+            finish();
             return;
         }
 
-        // Recuperar la información del perro desde la base de datos
         new Thread(() -> {
             Log.d("DogDetailActivity", "Attempting to fetch dog with ID: " + dogId);
             dog = dogDao.getDogById(dogId);
-            if (dog == null) {
-                Log.e("DogDetailActivity", "No dog found with ID: " + dogId);
-            }
             runOnUiThread(() -> {
                 if (dog != null) {
                     populateDogDetails(dog);
                     btnFavorite.setEnabled(true);
                 } else {
-                    Log.w("DogDetailActivity", "No dog found in the database, populating from Intent");
                     populateDogDetailsFromIntent(intent);
                     btnFavorite.setEnabled(true);
                 }
             });
         }).start();
 
-
-
         btnAdopt.setOnClickListener(v -> {
-            // Lógica para marcar como adoptado (puedes implementarla si es necesario)
+            // PENDING
         });
     }
 
     /**
-     * Rellena los detalles del perro en la UI.
+     * ML Kit.
      */
+    private void setupTranslator() {
+        TranslatorOptions options =
+                new TranslatorOptions.Builder()
+                        .setSourceLanguage(TranslateLanguage.SPANISH)
+                        .setTargetLanguage(TranslateLanguage.ENGLISH)
+                        .build();
+        translator = Translation.getClient(options);
+
+        translator.downloadModelIfNeeded()
+                .addOnSuccessListener(unused -> Log.d("MLKit", "Translation model downloaded"))
+                .addOnFailureListener(e -> Log.e("MLKit", "Error downloading translation model: " + e.getMessage()));
+    }
+
     private void populateDogDetails(Dog dog) {
-        Log.d("DogDetailActivity", "Populating details for Dog ID: " + dog.getId());
+        if (dog == null) {
+            Log.e("DogDetailActivity", "Dog is null in populateDogDetails!");
+            return;
+        }
+
         tvDogName.setText(dog.getName());
-        tvDogPersonality.setText(cleanHtmlTags(dog.getPersonalityDescription()));
         tvDogAge.setText(formatAge(dog.getAge()));
 
         Glide.with(this)
                 .load(dog.getImageUrl())
                 .into(ivDogImage);
 
-        if ("macho".equals(dog.getGender())) {
+        if ("macho".equalsIgnoreCase(dog.getGender())) {
             ivGenderIcon.setImageResource(R.drawable.ic_macho);
-        } else if ("hembra".equals(dog.getGender())) {
+        } else if ("hembra".equalsIgnoreCase(dog.getGender())) {
             ivGenderIcon.setImageResource(R.drawable.ic_hembra);
         }
 
-        // Configurar el estado inicial del botón de favoritos
+
+        if (dog.getSterilized() == 1) {
+            tvSterilizedStatus.setText("YES");
+            tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_yes);
+        } else{
+            tvSterilizedStatus.setText("NO");
+            tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_no);
+        }
+
+
+
+        translateText(cleanHtmlTags(dog.getPersonalityDescription()), translatedText -> tvDogPersonality.setText(translatedText));
         btnFavorite.setIconResource(dog.isFavorite() ? R.drawable.ic_favorite_border_filled : R.drawable.ic_favorite_border);
+
+        Log.d("DogDetailActivity", "Sterilized value from database: " + dog.getSterilized());
+        updateSterilizedStatus(dog.getSterilized());
     }
 
     /**
-     * Rellena los detalles del perro en la UI usando datos del Intent.
+     * Fill UI with Data from the Intent.
      */
     private void populateDogDetailsFromIntent(Intent intent) {
-        Log.w("DogDetailActivity", "Populating details from Intent as a fallback.");
         tvDogName.setText(intent.getStringExtra("dogName"));
-        tvDogPersonality.setText(cleanHtmlTags(intent.getStringExtra("dogPersonality")));
         tvDogAge.setText(formatAge(intent.getStringExtra("dogAge")));
 
         Glide.with(this)
@@ -127,48 +149,32 @@ public class DogDetailActivity extends AppCompatActivity {
                 .into(ivDogImage);
 
         String dogGender = intent.getStringExtra("dogGender");
-        if ("macho".equals(dogGender)) {
+        if ("macho".equalsIgnoreCase(dogGender)) {
             ivGenderIcon.setImageResource(R.drawable.ic_macho);
-        } else if ("hembra".equals(dogGender)) {
+        } else if ("hembra".equalsIgnoreCase(dogGender)) {
             ivGenderIcon.setImageResource(R.drawable.ic_hembra);
         }
 
-        // Botón de favorito por defecto (no respaldado por la base de datos)
+        int sterilized = intent.getIntExtra("dogSterilized", 0);
+        updateSterilizedStatus(sterilized);
+
+        translateText(cleanHtmlTags(intent.getStringExtra("dogPersonality")), translatedText -> tvDogPersonality.setText(translatedText));
         btnFavorite.setIconResource(R.drawable.ic_favorite_border);
+
     }
 
     /**
-     * Cambia el estado de favorito del perro y actualiza la base de datos.
+     * Actualiza el estado de esterilización en la UI.
      */
-    private void toggleFavorite() {
-        new Thread(() -> {
-            boolean newFavoriteStatus = !dog.isFavorite();
-
-            Log.d("DogDetailActivity", "Previous favorite status: " + dog.isFavorite());
-            Log.d("DogDetailActivity", "New favorite status: " + newFavoriteStatus);
-
-            dog.setFavorite(newFavoriteStatus);
-
-            // Actualiza la base de datos
-            dogDao.updateDog(dog);
-
-            // Actualiza la imagen en la UI
-            runOnUiThread(() -> {
-                // Cambia la imagen en el botón de favorito
-                if (newFavoriteStatus) {
-                    btnFavorite.setIcon(ContextCompat.getDrawable(this,R.drawable.ic_favorite_border_filled)); // Corazón lleno
-                    Log.d("DogDetailActivity", "Set icon to filled heart");
-                } else {
-                    btnFavorite.setIcon(ContextCompat.getDrawable(this,R.drawable.ic_favorite_border)); // Corazón vacío
-                    Log.d("DogDetailActivity", "Set icon to empty heart");
-                }
-
-                // Actualiza los detalles del perro para reflejar el estado de favorito en la UI
-                populateDogDetails(dog);
-            });
-        }).start();
+    private void updateSterilizedStatus(int sterilized) {
+        if (sterilized == 1) {
+            tvSterilizedStatus.setText("YES");
+            tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_yes);
+        } else {
+            tvSterilizedStatus.setText("NO");
+            tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_no);
+        }
     }
-
 
     private String cleanHtmlTags(String text) {
         if (text == null) return "";
@@ -185,5 +191,30 @@ public class DogDetailActivity extends AppCompatActivity {
             return age.replace("Años", "Years");
         }
         return age;
+    }
+
+    /**
+     *     ML Kit.
+     */
+    private void translateText(String text, OnTranslationCompleteListener listener) {
+        if (text == null || text.isEmpty()) {
+            listener.onTranslationComplete("");
+            return;
+        }
+
+        translator.translate(text)
+                .addOnSuccessListener(translatedText -> {
+                    Log.d("MLKit", "Translation successful: " + translatedText);
+                    listener.onTranslationComplete(translatedText);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("MLKit", "Translation failed: " + e.getMessage());
+                    listener.onTranslationComplete(text);
+                });
+    }
+
+
+    interface OnTranslationCompleteListener {
+        void onTranslationComplete(String translatedText);
     }
 }

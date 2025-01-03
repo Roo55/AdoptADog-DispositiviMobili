@@ -28,19 +28,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Configurar el título de la barra de herramientas
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Adopt a Dog");
+            getSupportActionBar().setTitle("AdoptADog");
         }
 
-        // Configuración del RecyclerView
         dogListRecyclerView = findViewById(R.id.dogList);
         dogListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Configurar el ViewModel
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // Observar cambios en la lista de perros
         mainViewModel.getDogs().observe(this, dogs -> {
             if (dogs != null) {
                 dogAdapter = new DogAdapter(dogs, this, this::onDogItemClick);
@@ -48,14 +44,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Observar errores
         mainViewModel.getError().observe(this, error -> {
             if (error != null) {
                 Toast.makeText(MainActivity.this, "Error fetching dogs: " + error, Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Llamar a la API para obtener los perros
         mainViewModel.fetchDogsFromApi();
     }
 
@@ -68,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Maneja los clics en los elementos del menú
+
         if (item.getItemId() == R.id.action_login) {
-            // Navegar a la pantalla de login
+            // Go to login
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             return true;
@@ -87,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("dogAge", dog.getAge());
             intent.putExtra("dogImage", dog.getImageUrl());
             intent.putExtra("dogGender", dog.getGender());
+            intent.putExtra("dogSterilized",dog.getSterilized());
             startActivity(intent);
         } else {
             Toast.makeText(MainActivity.this, "Error: Invalid Dog ID", Toast.LENGTH_SHORT).show();

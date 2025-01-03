@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.adoptadog.models.Dog;
-@Database(entities = {Dog.class}, version = 1)
+@Database(entities = {Dog.class}, version = 2)
 public abstract class DogDatabase extends RoomDatabase {
 
     private static volatile DogDatabase INSTANCE; // Variable para almacenar la instancia

@@ -8,7 +8,6 @@ public class DogResponse {
     @SerializedName("data")
     private List<Dog> dogs;
 
-    // Getter and Setter
     public List<Dog> getDogs() {
         return dogs;
     }
