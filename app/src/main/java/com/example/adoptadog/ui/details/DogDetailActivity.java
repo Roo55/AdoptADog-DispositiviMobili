@@ -85,7 +85,7 @@ public class DogDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * ML Kit.
+     * Setup the translator using ML Kit.
      */
     private void setupTranslator() {
         TranslatorOptions options =
@@ -107,7 +107,7 @@ public class DogDetailActivity extends AppCompatActivity {
         }
 
         tvDogName.setText(dog.getName());
-        tvDogAge.setText(formatAge(dog.getAge()));
+        translateText(dog.getAge(), translatedAge -> tvDogAge.setText(translatedAge));  // Traducir la edad
 
         Glide.with(this)
                 .load(dog.getImageUrl())
@@ -119,16 +119,13 @@ public class DogDetailActivity extends AppCompatActivity {
             ivGenderIcon.setImageResource(R.drawable.ic_hembra);
         }
 
-
         if (dog.getSterilized() == 1) {
             tvSterilizedStatus.setText("YES");
             tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_yes);
-        } else{
+        } else {
             tvSterilizedStatus.setText("NO");
             tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_no);
         }
-
-
 
         translateText(cleanHtmlTags(dog.getPersonalityDescription()), translatedText -> tvDogPersonality.setText(translatedText));
         btnFavorite.setIconResource(dog.isFavorite() ? R.drawable.ic_favorite_border_filled : R.drawable.ic_favorite_border);
@@ -142,7 +139,7 @@ public class DogDetailActivity extends AppCompatActivity {
      */
     private void populateDogDetailsFromIntent(Intent intent) {
         tvDogName.setText(intent.getStringExtra("dogName"));
-        tvDogAge.setText(formatAge(intent.getStringExtra("dogAge")));
+        translateText(intent.getStringExtra("dogAge"), translatedAge -> tvDogAge.setText(translatedAge));  // Traducir la edad
 
         Glide.with(this)
                 .load(intent.getStringExtra("dogImage"))
@@ -160,11 +157,10 @@ public class DogDetailActivity extends AppCompatActivity {
 
         translateText(cleanHtmlTags(intent.getStringExtra("dogPersonality")), translatedText -> tvDogPersonality.setText(translatedText));
         btnFavorite.setIconResource(R.drawable.ic_favorite_border);
-
     }
 
     /**
-     * Actualiza el estado de esterilización en la UI.
+     * Updates sterilized status in the UI.
      */
     private void updateSterilizedStatus(int sterilized) {
         if (sterilized == 1) {
@@ -181,20 +177,8 @@ public class DogDetailActivity extends AppCompatActivity {
         return text.replaceAll("<p>", "").replaceAll("</p>", "").trim();
     }
 
-    private String formatAge(String age) {
-        if (age == null) return "";
-        if (age.contains("Meses")) {
-            return age.replace("Meses", "Months");
-        } else if (age.contains("Año")) {
-            return age.replace("Año", "Year");
-        } else if (age.contains("Años")) {
-            return age.replace("Años", "Years");
-        }
-        return age;
-    }
-
     /**
-     *     ML Kit.
+     * ML Kit Translation.
      */
     private void translateText(String text, OnTranslationCompleteListener listener) {
         if (text == null || text.isEmpty()) {
@@ -209,10 +193,9 @@ public class DogDetailActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("MLKit", "Translation failed: " + e.getMessage());
-                    listener.onTranslationComplete(text);
+                    listener.onTranslationComplete(text);  
                 });
     }
-
 
     interface OnTranslationCompleteListener {
         void onTranslationComplete(String translatedText);

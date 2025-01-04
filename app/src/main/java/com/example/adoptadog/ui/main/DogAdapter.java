@@ -22,7 +22,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.target.Target;
 import com.example.adoptadog.R;
 import com.example.adoptadog.models.Dog;
-import com.example.adoptadog.ui.details.DogDetailActivity;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
@@ -35,12 +34,12 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
     private List<Dog> dogList;
     private Context context;
     private Translator translator;
-    private DogItemClickListener dogItemClickListener; // Listener for item clicks
+    private DogItemClickListener dogItemClickListener;
 
     public DogAdapter(List<Dog> dogList, Context context, DogItemClickListener dogItemClickListener) {
         this.dogList = dogList;
         this.context = context;
-        this.dogItemClickListener = dogItemClickListener; // Initialize listener
+        this.dogItemClickListener = dogItemClickListener;
         setupTranslator();
     }
 
@@ -60,7 +59,8 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         String description = cleanHtmlTags(dog.getPhysicalDescription());
         translateText(description, translatedText -> holder.tvDogBreed.setText(translatedText));
 
-        holder.tvDogAge.setText(formatAge(dog.getAge()));
+        // Traducimos la edad
+        translateText(dog.getAge(), translatedText -> holder.tvDogAge.setText(translatedText));
 
         if ("macho".equalsIgnoreCase(dog.getGender())) {
             holder.ivGenderIcon.setImageResource(R.drawable.ic_macho);
@@ -130,18 +130,6 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
     private String cleanHtmlTags(String text) {
         if (text == null) return "";
         return text.replaceAll("<p>", "").replaceAll("</p>", "").trim();
-    }
-
-    private String formatAge(String age) {
-        if (age == null) return "";
-        if (age.contains("Meses")) {
-            return age.replace("Meses", "Months");
-        } else if (age.contains("Año")) {
-            return age.replace("Año", "Year");
-        } else if (age.contains("Años")) {
-            return age.replace("Años", "Years");
-        }
-        return age;
     }
 
     public static class DogViewHolder extends RecyclerView.ViewHolder {

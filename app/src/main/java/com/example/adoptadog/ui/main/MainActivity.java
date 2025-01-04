@@ -1,6 +1,7 @@
 package com.example.adoptadog.ui.main;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,9 +33,11 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("AdoptADog");
         }
 
+        // Configurar RecyclerView
         dogListRecyclerView = findViewById(R.id.dogList);
         dogListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Configurar ViewModel
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         mainViewModel.getDogs().observe(this, dogs -> {
@@ -53,24 +56,60 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.fetchDogsFromApi();
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Infla el menú con el botón de login
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
+        return true; // Inflar el menú
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        MenuItem loginItem = menu.findItem(R.id.action_login);
+        MenuItem logoutItem = menu.findItem(R.id.action_logout);
+
+        if (isLoggedIn) {
+            loginItem.setVisible(false);
+            logoutItem.setVisible(true);
+        } else {
+            loginItem.setVisible(true);
+            logoutItem.setVisible(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.action_login) {
-            // Go to login
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
+            // Si el usuario selecciona "Login", ir a LoginActivity
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
             return true;
         }
-        return super.onOptionsItemSelected(item);
+
+        if (item.getItemId() == R.id.action_logout) {
+            // Si el usuario selecciona "Logout", realizar el logout
+            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isLoggedIn", false); // Cambiar estado a no logueado
+            editor.apply();
+
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+            // Forzar la actualización del menú
+            invalidateOptionsMenu();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item); // Delegar el manejo de otros ítems
     }
+
+
+
 
     private void onDogItemClick(Dog dog) {
         if (dog.getId() != -1) {

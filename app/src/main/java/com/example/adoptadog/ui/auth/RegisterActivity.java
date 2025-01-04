@@ -1,6 +1,7 @@
 package com.example.adoptadog.ui.auth;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -62,10 +63,20 @@ public class RegisterActivity extends AppCompatActivity {
         AuthManager.getInstance().register(email, password, new AuthManager.OnAuthListener() {
             @Override
             public void onSuccess(FirebaseUser user) {
+                // Guardar el estado de login en SharedPreferences
+                SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("isLoggedIn", true);
+                editor.apply();
+
                 Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 finish();
+
             }
+
 
             @Override
             public void onFailure(Exception exception) {
