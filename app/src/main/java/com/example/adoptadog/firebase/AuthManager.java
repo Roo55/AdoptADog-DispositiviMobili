@@ -18,12 +18,10 @@ public class AuthManager {
         return instance;
     }
 
-    // Método para obtener el usuario actual
     public FirebaseUser getCurrentUser() {
         return firebaseAuth.getCurrentUser();
     }
 
-    // Método para iniciar sesión
     public void login(String email, String password, OnAuthListener listener) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -36,7 +34,6 @@ public class AuthManager {
                 });
     }
 
-    // Método para registrar un nuevo usuario
     public void register(String email, String password, OnAuthListener listener) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {

@@ -24,19 +24,16 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register); // Vincula este layout con la actividad
+        setContentView(R.layout.activity_register);
 
-        // Inicializar vistas
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
         tvRedirectToLogin = findViewById(R.id.tvRedirectToLogin);
 
-        // Configurar el botón de registro
         btnRegister.setOnClickListener(v -> registerUser());
 
-        // Configurar el enlace para ir a la actividad de login
         tvRedirectToLogin.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -59,11 +56,10 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Usar AuthManager para registrar el usuario
         AuthManager.getInstance().register(email, password, new AuthManager.OnAuthListener() {
             @Override
             public void onSuccess(FirebaseUser user) {
-                // Guardar el estado de login en SharedPreferences
+
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("isLoggedIn", true);

@@ -14,4 +14,8 @@
     <color name="teal_200">#03DAC5</color>
     <color name="blue">#3361FF</color>
     <color name="dark_gray">#616161</color>
+    <color name="md_theme_primary">#6200EE</color>
+    <color name="md_theme_on_primary">#FFFFFF</color>
+    <color name="md_theme_background">#F5F5F5</color>
+
 </resources>

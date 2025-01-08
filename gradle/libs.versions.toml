@@ -8,7 +8,6 @@ material = "1.12.0"
 activity = "1.8.0"
 constraintlayout = "2.2.0"
 room = "2.6.1"
-supportAnnotations = "28.0.0"
 gson = "2.10.1"
 retrofit = "2.10.0"
 
@@ -29,9 +28,7 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 # Room dependencies
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-common = { group = "androidx.room", name = "room-common", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

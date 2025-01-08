@@ -16,4 +16,8 @@ public class DatabaseClient {
         }
         return instance;
     }
+
+    public static synchronized AdoptionDAO getAdoptionDAO(Context context) {
+        return getInstance(context).adoptionDAO();  // Devolvemos el DAO de adopción
+    }
 }

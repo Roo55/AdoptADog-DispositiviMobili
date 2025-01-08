@@ -30,7 +30,7 @@ public interface DogDAO {
     void updateFavoriteStatus(int dogId, boolean isFavorite);
 
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertDog(Dog dog);
 
     @Query("DELETE FROM dogs WHERE id = :dogId")
@@ -38,5 +38,5 @@ public interface DogDAO {
 
 
     @Query("SELECT COUNT(*) FROM dogs WHERE id = :dogId")
-    int checkIfDogExists(int dogId); // Verifica si el perro ya existe
+    int checkIfDogExists(int dogId);
 }

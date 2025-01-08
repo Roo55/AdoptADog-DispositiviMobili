@@ -33,11 +33,9 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("AdoptADog");
         }
 
-        // Configurar RecyclerView
         dogListRecyclerView = findViewById(R.id.dogList);
         dogListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Configurar ViewModel
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         mainViewModel.getDogs().observe(this, dogs -> {
@@ -60,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true; // Inflar el menú
+        return true;
     }
 
     @Override
@@ -85,27 +83,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_login) {
-            // Si el usuario selecciona "Login", ir a LoginActivity
             Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(loginIntent);
             return true;
         }
 
         if (item.getItemId() == R.id.action_logout) {
-            // Si el usuario selecciona "Logout", realizar el logout
+
             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("isLoggedIn", false); // Cambiar estado a no logueado
+            editor.putBoolean("isLoggedIn", false);
             editor.apply();
 
             Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
 
-            // Forzar la actualización del menú
             invalidateOptionsMenu();
             return true;
         }
 
-        return super.onOptionsItemSelected(item); // Delegar el manejo de otros ítems
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -114,13 +110,7 @@ public class MainActivity extends AppCompatActivity {
     private void onDogItemClick(Dog dog) {
         if (dog.getId() != -1) {
             Intent intent = new Intent(MainActivity.this, DogDetailActivity.class);
-            intent.putExtra("dogId", dog.getId());
-            intent.putExtra("dogName", dog.getName());
-            intent.putExtra("dogPersonality", dog.getPersonalityDescription());
-            intent.putExtra("dogAge", dog.getAge());
-            intent.putExtra("dogImage", dog.getImageUrl());
-            intent.putExtra("dogGender", dog.getGender());
-            intent.putExtra("dogSterilized",dog.getSterilized());
+            intent.putExtra("dog",dog);
             startActivity(intent);
         } else {
             Toast.makeText(MainActivity.this, "Error: Invalid Dog ID", Toast.LENGTH_SHORT).show();

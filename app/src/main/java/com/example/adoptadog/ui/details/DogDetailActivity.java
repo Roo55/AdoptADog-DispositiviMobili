@@ -12,9 +12,14 @@ import com.bumptech.glide.Glide;
 import com.example.adoptadog.R;
 import com.example.adoptadog.database.DatabaseClient;
 import com.example.adoptadog.database.DogDAO;
+import com.example.adoptadog.firebase.AuthManager;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.repository.DogRepository;
+import com.example.adoptadog.ui.adoption.AdoptionFormActivity;
+import com.example.adoptadog.ui.auth.LoginActivity;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
@@ -29,6 +34,7 @@ public class DogDetailActivity extends AppCompatActivity {
     private DogDAO dogDao;
     private Dog dog;
     private Translator translator;
+    private boolean isDogLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,36 +63,50 @@ public class DogDetailActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         Intent intent = getIntent();
-        int dogId = intent.getIntExtra("dogId", -1);
+        dog = (Dog) intent.getSerializableExtra("dog");
 
-        if (dogId == -1) {
-            Log.e("DogDetailActivity", "No valid dogId received!");
+        if (dog == null) {
+            Log.e("DogDetailActivity", "Dog object is null in the intent!");
             finish();
             return;
         }
 
-        new Thread(() -> {
-            Log.d("DogDetailActivity", "Attempting to fetch dog with ID: " + dogId);
-            dog = dogDao.getDogById(dogId);
-            runOnUiThread(() -> {
-                if (dog != null) {
-                    populateDogDetails(dog);
-                    btnFavorite.setEnabled(true);
-                } else {
-                    populateDogDetailsFromIntent(intent);
-                    btnFavorite.setEnabled(true);
-                }
-            });
-        }).start();
+        populateDogDetails(dog);
+        btnFavorite.setEnabled(true);
+        isDogLoaded = true;
 
+        setupAdoptButtonClickListener();
+    }
+
+    private void setupAdoptButtonClickListener() {
         btnAdopt.setOnClickListener(v -> {
-            // PENDING
+            if (!isUserLoggedIn()) {
+                Snackbar.make(v, "You must be logged in to adopt a dog.", Snackbar.LENGTH_LONG).show();
+
+                Intent loginIntent = new Intent(DogDetailActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+
+            } else if (!isDogLoaded) {
+                Snackbar.make(v, "Please wait, dog data is still loading.", Snackbar.LENGTH_LONG).show();
+            } else {
+                if (dog != null) {
+                    Intent adoptIntent = new Intent(DogDetailActivity.this, AdoptionFormActivity.class);
+                    adoptIntent.putExtra("dog", dog); // Pasamos el objeto dog completo
+                    startActivity(adoptIntent);
+                } else {
+                    Log.e("DogDetailActivity", "Dog object is null when attempting to adopt.");
+                    Snackbar.make(v, "Error: Dog data not available.", Snackbar.LENGTH_LONG).show();
+                }
+            }
         });
     }
 
-    /**
-     * Setup the translator using ML Kit.
-     */
+
+    private boolean isUserLoggedIn() {
+        return AuthManager.getInstance().getCurrentUser() != null;
+
+    }
+
     private void setupTranslator() {
         TranslatorOptions options =
                 new TranslatorOptions.Builder()
@@ -107,7 +127,7 @@ public class DogDetailActivity extends AppCompatActivity {
         }
 
         tvDogName.setText(dog.getName());
-        translateText(dog.getAge(), translatedAge -> tvDogAge.setText(translatedAge));  // Traducir la edad
+        translateText(dog.getAge(), translatedAge -> tvDogAge.setText(translatedAge)); // Traducir la edad
 
         Glide.with(this)
                 .load(dog.getImageUrl())
@@ -134,34 +154,6 @@ public class DogDetailActivity extends AppCompatActivity {
         updateSterilizedStatus(dog.getSterilized());
     }
 
-    /**
-     * Fill UI with Data from the Intent.
-     */
-    private void populateDogDetailsFromIntent(Intent intent) {
-        tvDogName.setText(intent.getStringExtra("dogName"));
-        translateText(intent.getStringExtra("dogAge"), translatedAge -> tvDogAge.setText(translatedAge));  // Traducir la edad
-
-        Glide.with(this)
-                .load(intent.getStringExtra("dogImage"))
-                .into(ivDogImage);
-
-        String dogGender = intent.getStringExtra("dogGender");
-        if ("macho".equalsIgnoreCase(dogGender)) {
-            ivGenderIcon.setImageResource(R.drawable.ic_macho);
-        } else if ("hembra".equalsIgnoreCase(dogGender)) {
-            ivGenderIcon.setImageResource(R.drawable.ic_hembra);
-        }
-
-        int sterilized = intent.getIntExtra("dogSterilized", 0);
-        updateSterilizedStatus(sterilized);
-
-        translateText(cleanHtmlTags(intent.getStringExtra("dogPersonality")), translatedText -> tvDogPersonality.setText(translatedText));
-        btnFavorite.setIconResource(R.drawable.ic_favorite_border);
-    }
-
-    /**
-     * Updates sterilized status in the UI.
-     */
     private void updateSterilizedStatus(int sterilized) {
         if (sterilized == 1) {
             tvSterilizedStatus.setText("YES");
@@ -177,9 +169,6 @@ public class DogDetailActivity extends AppCompatActivity {
         return text.replaceAll("<p>", "").replaceAll("</p>", "").trim();
     }
 
-    /**
-     * ML Kit Translation.
-     */
     private void translateText(String text, OnTranslationCompleteListener listener) {
         if (text == null || text.isEmpty()) {
             listener.onTranslationComplete("");
@@ -193,7 +182,7 @@ public class DogDetailActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("MLKit", "Translation failed: " + e.getMessage());
-                    listener.onTranslationComplete(text);  
+                    listener.onTranslationComplete(text);
                 });
     }
 

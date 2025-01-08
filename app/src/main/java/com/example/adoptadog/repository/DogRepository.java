@@ -35,13 +35,10 @@ public class DogRepository {
                 // Inserta los perros en la base de datos
                 new Thread(() -> {
                     for (Dog dog : dogs) {
-                        // Verificar si el perro ya existe en la base de datos
-                        int count = dogDAO.checkIfDogExists(dog.getId());
-                        if (count == 0) {  // Si el perro no existe, insertarlo
-                            dogDAO.insertDog(dog);
-                        } else {
-                            Log.d("DogRepository", "El perro con ID " + dog.getId() + " ya existe.");
-                        }
+                        dogDAO.deleteDog(dog.getId());
+
+                        dogDAO.insertDog(dog);
+                        Log.d("DogRepository", "Dog inserted: " + dog.getName());
                     }
                 }).start();
             }

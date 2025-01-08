@@ -7,8 +7,10 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 @Entity(tableName = "dogs")
-public class Dog {
+public class Dog implements Serializable {
 
     @PrimaryKey
     @NonNull
