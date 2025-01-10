@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.models.AdoptionForm;  // Asegúrate de que esta clase esté importada
 
-@Database(entities = {Dog.class, AdoptionForm.class}, version = 4)
+@Database(entities = {Dog.class, AdoptionForm.class}, version = 5)
 public abstract class DogDatabase extends RoomDatabase {
 
     private static volatile DogDatabase INSTANCE; //

@@ -3,8 +3,11 @@ package com.example.adoptadog.ui.main;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.adoptadog.R;
+import com.example.adoptadog.firebase.AuthManager;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.ui.auth.LoginActivity;
 import com.example.adoptadog.ui.details.DogDetailActivity;
@@ -23,16 +27,33 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView dogListRecyclerView;
     private DogAdapter dogAdapter;
     private MainViewModel mainViewModel;
+    private ImageView userIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("AdoptADog");
+        // Configurar Toolbar
+        userIcon = findViewById(R.id.user_icon);
+
+        // Revisar si el usuario está logueado
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        // Cambiar ícono según el estado de login
+        if (isLoggedIn) {
+            userIcon.setImageResource(R.drawable.person_icon);  // Ícono de persona
+            userIcon.setOnClickListener(this::showUserMenu); // Habilitar el PopupMenu si está logueado
+        } else {
+            userIcon.setImageResource(R.drawable.ic_login);  // Ícono de login
+            userIcon.setOnClickListener(v -> {
+                // Si no está logueado, redirigir a la actividad de login
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            });
         }
 
+        // Configurar RecyclerView
         dogListRecyclerView = findViewById(R.id.dogList);
         dogListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -54,63 +75,51 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.fetchDogsFromApi();
     }
 
+    private void showUserMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view, 0, 0, R.style.CustomPopupMenu);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.user_menu, popupMenu.getMenu());
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
+        popupMenu.setOnMenuItemClickListener(this::onUserMenuItemClick);
+        popupMenu.show();
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    private boolean onUserMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menu_my_account) {
+            Toast.makeText(this, "My Account clicked", Toast.LENGTH_SHORT).show();
+            // Implementar lógica más adelante
+            return true;
+        } else if (id == R.id.menu_log_out) {
+            logOutUser();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void logOutUser() {
+        AuthManager.getInstance().logOut();
+
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isLoggedIn", false);
+        editor.apply();
 
-        MenuItem loginItem = menu.findItem(R.id.action_login);
-        MenuItem logoutItem = menu.findItem(R.id.action_logout);
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
 
-        if (isLoggedIn) {
-            loginItem.setVisible(false);
-            logoutItem.setVisible(true);
-        } else {
-            loginItem.setVisible(true);
-            logoutItem.setVisible(false);
-        }
-
-        return super.onPrepareOptionsMenu(menu);
+        // Cambiar el ícono de usuario de nuevo a login
+        userIcon.setImageResource(R.drawable.ic_login);
+        userIcon.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        });
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_login) {
-            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(loginIntent);
-            return true;
-        }
-
-        if (item.getItemId() == R.id.action_logout) {
-
-            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("isLoggedIn", false);
-            editor.apply();
-
-            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-
-            invalidateOptionsMenu();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
 
     private void onDogItemClick(Dog dog) {
         if (dog.getId() != -1) {
             Intent intent = new Intent(MainActivity.this, DogDetailActivity.class);
-            intent.putExtra("dog",dog);
+            intent.putExtra("dog", dog);
             startActivity(intent);
         } else {
             Toast.makeText(MainActivity.this, "Error: Invalid Dog ID", Toast.LENGTH_SHORT).show();

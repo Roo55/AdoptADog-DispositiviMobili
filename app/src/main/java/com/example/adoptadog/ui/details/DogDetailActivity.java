@@ -78,20 +78,23 @@ public class DogDetailActivity extends AppCompatActivity {
         setupAdoptButtonClickListener();
     }
 
+
     private void setupAdoptButtonClickListener() {
         btnAdopt.setOnClickListener(v -> {
             if (!isUserLoggedIn()) {
                 Snackbar.make(v, "You must be logged in to adopt a dog.", Snackbar.LENGTH_LONG).show();
 
                 Intent loginIntent = new Intent(DogDetailActivity.this, LoginActivity.class);
+                loginIntent.putExtra("redirectReason", "You must be logged in to fill out the adoption form!");
                 startActivity(loginIntent);
 
             } else if (!isDogLoaded) {
                 Snackbar.make(v, "Please wait, dog data is still loading.", Snackbar.LENGTH_LONG).show();
             } else {
                 if (dog != null) {
+                    // Aquí estamos pasando el dogId al Intent
                     Intent adoptIntent = new Intent(DogDetailActivity.this, AdoptionFormActivity.class);
-                    adoptIntent.putExtra("dog", dog); // Pasamos el objeto dog completo
+                    adoptIntent.putExtra("dogId", dog.getId());  // Pasar el dogId aquí
                     startActivity(adoptIntent);
                 } else {
                     Log.e("DogDetailActivity", "Dog object is null when attempting to adopt.");
@@ -100,6 +103,8 @@ public class DogDetailActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     private boolean isUserLoggedIn() {

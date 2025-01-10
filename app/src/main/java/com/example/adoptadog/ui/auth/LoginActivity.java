@@ -26,19 +26,24 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar vistas
+        Intent intent = getIntent();
+        if (intent.hasExtra("redirectReason")) {
+            String redirectReason = intent.getStringExtra("redirectReason");
+            if (redirectReason != null && !redirectReason.isEmpty()) {
+                Toast.makeText(this, redirectReason, Toast.LENGTH_LONG).show();
+            }
+        }
+
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRedirectToRegister = findViewById(R.id.tvRedirectToRegister);
 
-        // Configurar el botón de login
         btnLogin.setOnClickListener(v -> loginUser());
 
-        // Configurar el enlace para ir a la actividad de registro
         tvRedirectToRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+            Intent intentToRegister = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intentToRegister);
         });
     }
 
@@ -54,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         AuthManager.getInstance().login(email, password, new AuthManager.OnAuthListener() {
             @Override
             public void onSuccess(FirebaseUser user) {
-                // Guardar el estado de login en SharedPreferences
+
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("isLoggedIn", true);
@@ -65,7 +70,6 @@ public class LoginActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
-
             }
 
             @Override
@@ -74,5 +78,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 }

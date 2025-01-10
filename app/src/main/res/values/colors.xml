@@ -9,7 +9,6 @@
     <color name="md_theme_light_surface">#FFFFFF</color>
     <color name="md_theme_light_onSurface">#000000</color>
     <color name="md_theme_light_outline">#E0E0E0</color>
-    <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#03DAC5</color>
     <color name="blue">#3361FF</color>
@@ -17,5 +16,7 @@
     <color name="md_theme_primary">#6200EE</color>
     <color name="md_theme_on_primary">#FFFFFF</color>
     <color name="md_theme_background">#F5F5F5</color>
+    <color name="color_blue_logo">#3D7DDC</color>
+
 
 </resources>

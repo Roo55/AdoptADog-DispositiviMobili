@@ -1,8 +1,12 @@
 package com.example.adoptadog.ui.adoption;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,9 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class AdoptionFormActivity extends AppCompatActivity {
 
     private TextInputEditText etFullName, etEmail, etPhone, etAddress, etComments;
+    private Spinner spCountryCode;
     private MaterialButton btnSubmitForm;
     private AdoptionDAO adoptionDao;
 
@@ -29,33 +37,107 @@ public class AdoptionFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adoption_form);
 
-        // Initialize views
+        int dogId = getIntent().getIntExtra("dogId", -1);
+
         etFullName = findViewById(R.id.etFullName);
         etEmail = findViewById(R.id.etEmail);
         etPhone = findViewById(R.id.etPhone);
+        spCountryCode = findViewById(R.id.spCountryCode);
         etAddress = findViewById(R.id.etAddress);
         etComments = findViewById(R.id.etComments);
         btnSubmitForm = findViewById(R.id.btnSubmitForm);
 
-        // Initialize Room DAO
         adoptionDao = DatabaseClient.getInstance(getApplicationContext()).adoptionDAO();
 
-        // Autocomplete email if user is logged in
         populateUserEmail();
+        setupCountryCodeSpinner();
+        setupPhoneValidation();
 
-        // Set up submit button click listener
         btnSubmitForm.setOnClickListener(v -> {
             if (validateForm()) {
-                saveFormToDatabase();
+                saveFormToDatabase(dogId);
             } else {
                 Snackbar.make(v, "Please fill all the required fields.", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
 
-    /**
-     * Autocompletes the email field with the user's Firebase email.
-     */
+    private void setupCountryCodeSpinner() {
+        List<String> countryCodes = Arrays.asList(
+                "+1 (US)", "+44 (GB)", "+34 (ES)", "+49 (DE)", "+33 (FR)", "+39 (IT)", "+34 (ES)", "+45 (DK)",
+                "+31 (NL)", "+41 (CH)", "+46 (SE)", "+32 (BE)", "+43 (AT)", "+48 (PL)", "+359 (BG)", "+351 (PT)"
+        );
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, countryCodes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCountryCode.setAdapter(adapter);
+    }
+
+    private void setupPhoneValidation() {
+        etPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validatePhoneNumber();
+            }
+        });
+    }
+
+    private void validatePhoneNumber() {
+        String selectedCode = spCountryCode.getSelectedItem().toString();
+        String phoneNumber = etPhone.getText().toString().trim();
+
+        switch (selectedCode) {
+            case "+1 (US)":
+                if (phoneNumber.length() != 10) {
+                    etPhone.setError("Phone number must be 10 digits for US");
+                } else if (!phoneNumber.matches("\\d+")) {
+                    etPhone.setError("Phone number must contain only digits");
+                } else {
+                    etPhone.setError(null);
+                }
+                break;
+
+            case "+44 (GB)":
+                if (phoneNumber.length() < 10 || phoneNumber.length() > 11) {
+                    etPhone.setError("Phone number must be 10 or 11 digits for UK");
+                } else if (!phoneNumber.matches("\\d+")) {
+                    etPhone.setError("Phone number must contain only digits");
+                } else {
+                    etPhone.setError(null);
+                }
+                break;
+
+            case "+34 (ES)":
+                if (phoneNumber.length() != 9) {
+                    etPhone.setError("Phone number must be 9 digits for Spain");
+                } else if (!phoneNumber.matches("\\d+")) {
+                    etPhone.setError("Phone number must contain only digits");
+                } else {
+                    etPhone.setError(null);
+                }
+                break;
+
+            case "+49 (DE)":
+                if (phoneNumber.length() != 11) {
+                    etPhone.setError("Phone number must be 11 digits for Germany");
+                } else if (!phoneNumber.matches("\\d+")) {
+                    etPhone.setError("Phone number must contain only digits");
+                } else {
+                    etPhone.setError(null);
+                }
+                break;
+
+            default:
+                etPhone.setError(null);
+                break;
+        }
+    }
+
     private void populateUserEmail() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && !TextUtils.isEmpty(user.getEmail())) {
@@ -63,9 +145,6 @@ public class AdoptionFormActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Validates the form to ensure all required fields are filled.
-     */
     private boolean validateForm() {
         if (TextUtils.isEmpty(etFullName.getText())) {
             etFullName.setError("Full name is required");
@@ -79,6 +158,9 @@ public class AdoptionFormActivity extends AppCompatActivity {
             etPhone.setError("Phone number is required");
             return false;
         }
+        if (etPhone.getError() != null) {
+            return false;
+        }
         if (TextUtils.isEmpty(etAddress.getText())) {
             etAddress.setError("Address is required");
             return false;
@@ -86,27 +168,21 @@ public class AdoptionFormActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Synchronize with Firebase.
-     */
-    private void saveFormToDatabase() {
-        // Gather form data
+    private void saveFormToDatabase(int dogId) {
         String fullName = etFullName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String phone = etPhone.getText().toString().trim();
+        String countryCode = spCountryCode.getSelectedItem().toString();
         String address = etAddress.getText().toString().trim();
         String comments = etComments.getText() != null ? etComments.getText().toString().trim() : "";
 
-        // Create AdoptionForm object
-        AdoptionForm adoptionForm = new AdoptionForm(fullName, email, phone, address, comments);
+        AdoptionForm adoptionForm = new AdoptionForm(fullName, email, countryCode + phone, address, comments, dogId);
 
-        // Save to Room database in a separate thread
         new Thread(() -> {
             try {
                 adoptionDao.insert(adoptionForm);
-                Log.d("AdoptionFormActivity", "Form saved locally: " + adoptionForm.toString());
+                Log.d("AdoptionFormActivity", "Form saved locally: " + adoptionForm);
 
-                // Sync with Firebase
                 syncFormWithFirebase(adoptionForm);
 
                 runOnUiThread(() -> Toast.makeText(this, "Form submitted successfully!", Toast.LENGTH_LONG).show());
@@ -117,9 +193,6 @@ public class AdoptionFormActivity extends AppCompatActivity {
         }).start();
     }
 
-    /**
-     * Syncs the adoption form with Firebase Realtime Database.
-     */
     private void syncFormWithFirebase(AdoptionForm form) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {

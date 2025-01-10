@@ -73,7 +73,7 @@ public class Dog implements Serializable {
     @ColumnInfo(name = "isFavorite")
     private boolean isFavorite;
 
-    // Constructor
+
     public Dog(int id, String name, String type, String color, String age, String status,
                String gender, String physicalDescription, String personalityDescription,
                String imageUrl, String region, String comuna, String detailsUrl,int sterilized, boolean isFavorite) {
@@ -94,7 +94,7 @@ public class Dog implements Serializable {
         this.sterilized = sterilized;
     }
 
-    // Getters and Setters
+
     @NonNull
     public int getId() {
         return id;

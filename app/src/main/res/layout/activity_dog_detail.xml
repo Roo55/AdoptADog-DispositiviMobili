@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Botón de retroceso -->
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="32dp"
@@ -20,17 +19,26 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Imagen del perro -->
+        <ImageView
+            android:id="@+id/ivAppLogo"
+            android:layout_width="300dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/adoptadoglogo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnBack" />
+
         <ImageView
             android:id="@+id/ivDogImage"
             android:layout_width="0dp"
             android:layout_height="300dp"
             android:scaleType="centerCrop"
-            app:layout_constraintTop_toBottomOf="@id/btnBack"
+            app:layout_constraintTop_toBottomOf="@id/ivAppLogo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Tarjeta de información -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardDogInfo"
             android:layout_width="0dp"
@@ -48,7 +56,6 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Nombre y género -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -71,7 +78,6 @@
                         android:layout_marginStart="8dp"
                         android:src="@drawable/ic_macho" />
 
-                    <!-- Esterilizado -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -100,7 +106,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Edad -->
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tvDogAge"
                     android:layout_width="wrap_content"
@@ -110,7 +115,6 @@
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="4dp" />
 
-                <!-- Descripción -->
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tvDogPersonality"
                     android:layout_width="match_parent"
@@ -122,7 +126,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Botones de acción -->
         <LinearLayout
             android:id="@+id/buttonsLayout"
             android:layout_width="0dp"
@@ -135,7 +138,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_margin="16dp">
 
-            <!-- Botón Favorito -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFavorite"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -148,7 +150,6 @@
                 app:strokeColor="@color/md_theme_light_primary"
                 app:strokeWidth="1dp" />
 
-            <!-- Botón Adopción -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAdopt"
                 style="@style/Widget.MaterialComponents.Button"

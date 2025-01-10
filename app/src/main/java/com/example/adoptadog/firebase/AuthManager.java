@@ -19,7 +19,13 @@ public class AuthManager {
     }
 
     public FirebaseUser getCurrentUser() {
-        return firebaseAuth.getCurrentUser();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            System.out.println("User logged in: " + user.getEmail());
+        } else {
+            System.out.println("No user logged in.");
+        }
+        return user;
     }
 
     public void login(String email, String password, OnAuthListener listener) {
@@ -33,6 +39,11 @@ public class AuthManager {
                     }
                 });
     }
+
+    public void logOut() {
+        firebaseAuth.signOut();
+    }
+
 
     public void register(String email, String password, OnAuthListener listener) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
