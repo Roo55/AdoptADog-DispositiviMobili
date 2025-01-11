@@ -40,6 +40,11 @@
             android:name=".ui.adoption.AdoptionFormActivity"
             android:exported="true" />
 
+        <activity android:name=".ui.adoption.ThankYouActivity"
+            android:label="Thank You">
+        </activity>
+
+
     </application>
 
 </manifest>

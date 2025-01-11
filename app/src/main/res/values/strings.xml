@@ -2,4 +2,7 @@
     <string name="app_name">AdoptADog</string>
     <string name="gender_male_icon">Male dog icon</string>
     <string name="gender_female_icon">Female dog icon</string>
+    <string name="thank_you_message">Thank you for collaborating with dog adoption!</string>
+    <string name="follow_up_message">Would you like to go back to the main view to see more dogs?</string>
+    <string name="return_to_main_button">See more dogs</string>
 </resources>

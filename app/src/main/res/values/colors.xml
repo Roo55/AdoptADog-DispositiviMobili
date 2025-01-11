@@ -17,6 +17,13 @@
     <color name="md_theme_on_primary">#FFFFFF</color>
     <color name="md_theme_background">#F5F5F5</color>
     <color name="color_blue_logo">#3D7DDC</color>
+    <color name="gray">#808080</color>
+    <color name="menu_item_text_color">#333333</color>
+    <color name="menu_item_hover_color">#f0f0f0</color>
+    <color name="menu_item_icon_color">#3D7DDC</color>
+    <color name="menu_background_color">#FFFFFF</color>
+    <color name="menu_background_hover_color">#E0E0E0</color>
+
 
 
 </resources>

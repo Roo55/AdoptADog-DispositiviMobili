@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Theme.AdoptADog" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
         <item name="colorPrimaryVariant">@color/color_blue_logo</item>
@@ -7,9 +7,18 @@
         <item name="colorSecondary">@color/teal_200</item>
     </style>
 
-    <style name="CustomPopupMenu" parent="Widget.MaterialComponents.PopupMenu">
-        <item name="android:popupBackground">@color/white</item>
-        <item name="android:textColor">@color/black</item>
+        <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <item name="boxBackgroundMode">outline</item>
+            <item name="boxCornerRadiusTopStart">16dp</item>
+            <item name="boxCornerRadiusTopEnd">16dp</item>
+            <item name="boxCornerRadiusBottomStart">16dp</item>
+            <item name="boxCornerRadiusBottomEnd">16dp</item>
+        </style>
+
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@drawable/custom_popup_menu_background</item>
+        <item name="android:textColor">@color/menu_item_text_color</item>
+
     </style>
 
 </resources>

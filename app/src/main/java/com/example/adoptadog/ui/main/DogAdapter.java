@@ -59,7 +59,6 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         String description = cleanHtmlTags(dog.getPhysicalDescription());
         translateText(description, translatedText -> holder.tvDogBreed.setText(translatedText));
 
-        // Traducimos la edad
         translateText(dog.getAge(), translatedText -> holder.tvDogAge.setText(translatedText));
 
         if ("macho".equalsIgnoreCase(dog.getGender())) {

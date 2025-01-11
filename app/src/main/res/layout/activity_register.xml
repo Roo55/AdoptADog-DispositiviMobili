@@ -8,7 +8,6 @@
     tools:context=".ui.auth.RegisterActivity"
     android:padding="16dp">
 
-    <!-- Título -->
     <TextView
         android:id="@+id/tvRegisterTitle"
         android:layout_width="wrap_content"
@@ -22,7 +21,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center" />
 
-    <!-- Campo de Nombre -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilName"
         android:layout_width="match_parent"
@@ -31,7 +29,8 @@
         app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        style="@style/CustomTextInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etName"
@@ -40,7 +39,6 @@
             android:inputType="textPersonName" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Campo de Email -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEmail"
         android:layout_width="match_parent"
@@ -49,7 +47,8 @@
         app:layout_constraintTop_toBottomOf="@id/tilName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        style="@style/CustomTextInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
@@ -58,7 +57,6 @@
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Campo de Contraseña -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilPassword"
         android:layout_width="match_parent"
@@ -67,16 +65,18 @@
         app:layout_constraintTop_toBottomOf="@id/tilEmail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        style="@style/CustomTextInputLayout"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:paddingEnd="48dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Campo para Confirmar Contraseña -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilConfirmPassword"
         android:layout_width="match_parent"
@@ -85,16 +85,18 @@
         app:layout_constraintTop_toBottomOf="@id/tilPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        style="@style/CustomTextInputLayout"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:paddingEnd="48dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Botón de Registro -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRegister"
         android:layout_width="match_parent"
@@ -105,7 +107,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Redirigir a Login -->
     <TextView
         android:id="@+id/tvRedirectToLogin"
         android:layout_width="wrap_content"

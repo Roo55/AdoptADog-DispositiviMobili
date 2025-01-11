@@ -1,5 +1,6 @@
 package com.example.adoptadog.ui.adoption;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -185,13 +186,20 @@ public class AdoptionFormActivity extends AppCompatActivity {
 
                 syncFormWithFirebase(adoptionForm);
 
-                runOnUiThread(() -> Toast.makeText(this, "Form submitted successfully!", Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Form submitted successfully!", Toast.LENGTH_LONG).show();
+
+                    Intent intent = new Intent(AdoptionFormActivity.this, ThankYouActivity.class);
+                    startActivity(intent);
+                    finish();
+                });
             } catch (Exception e) {
                 Log.e("AdoptionFormActivity", "Error saving form: " + e.getMessage());
                 runOnUiThread(() -> Toast.makeText(this, "Failed to submit the form. Please try again.", Toast.LENGTH_LONG).show());
             }
         }).start();
     }
+
 
     private void syncFormWithFirebase(AdoptionForm form) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

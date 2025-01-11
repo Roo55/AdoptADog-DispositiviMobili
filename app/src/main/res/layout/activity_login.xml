@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center" />
 
-    <!-- Campo de Email -->
+    <!-- Campo de Email con estilo redondeado -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEmail"
         android:layout_width="match_parent"
@@ -31,7 +31,8 @@
         app:layout_constraintTop_toBottomOf="@id/tvLoginTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        style="@style/CustomTextInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
@@ -40,7 +41,7 @@
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Campo de Contraseña -->
+    <!-- Campo de Contraseña con ícono de ojo dentro del input (con passwordToggleEnabled) -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilPassword"
         android:layout_width="match_parent"
@@ -49,13 +50,16 @@
         app:layout_constraintTop_toBottomOf="@id/tilEmail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        style="@style/CustomTextInputLayout"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:paddingEnd="48dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Botón de Login -->
