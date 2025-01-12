@@ -23,6 +23,7 @@
     <color name="menu_item_icon_color">#3D7DDC</color>
     <color name="menu_background_color">#FFFFFF</color>
     <color name="menu_background_hover_color">#E0E0E0</color>
+    <color name="red">#FF0000</color>
 
 
 

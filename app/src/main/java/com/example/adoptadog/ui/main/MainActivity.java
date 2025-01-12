@@ -6,15 +6,14 @@ import android.os.Bundle;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.adoptadog.R;
 import com.example.adoptadog.firebase.AuthManager;
 import com.example.adoptadog.models.Dog;
@@ -27,27 +26,19 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView dogListRecyclerView;
     private DogAdapter dogAdapter;
     private MainViewModel mainViewModel;
-    private ImageView userIcon, appLogo;
+    private Button userButton;
+    private ImageView userIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        userButton = findViewById(R.id.user_button);
         userIcon = findViewById(R.id.user_icon);
-        appLogo = findViewById(R.id.app_logo);
         dogListRecyclerView = findViewById(R.id.dogList);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-
-        if (isLoggedIn) {
-            userIcon.setImageResource(R.drawable.person_icon);
-            userIcon.setOnClickListener(this::showUserMenu);
-        } else {
-            userIcon.setImageResource(R.drawable.ic_login);
-            userIcon.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
-        }
+        updateUserIcon();
 
         dogListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -67,8 +58,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mainViewModel.fetchDogsFromApi();
+    }
 
-        appLogo.setOnClickListener(v -> dogListRecyclerView.smoothScrollToPosition(0));
+    private void updateUserIcon() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        if (isLoggedIn) {
+            userIcon.setVisibility(View.VISIBLE);
+            userButton.setVisibility(View.GONE);
+            userIcon.setOnClickListener(this::showUserMenu);
+        } else {
+            userIcon.setVisibility(View.GONE);
+            userButton.setVisibility(View.VISIBLE);
+            userButton.setText("Login");
+            userButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
+        }
     }
 
     private void showUserMenu(View view) {
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean onUserMenuItemClick(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_my_account) {
-            Toast.makeText(this, "My Account clicked", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
             return true;
         } else if (id == R.id.menu_log_out) {
             logOutUser();
@@ -97,9 +102,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLoggedIn", false);
         editor.apply();
-        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-        userIcon.setImageResource(R.drawable.ic_login);
-        userIcon.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
+        updateUserIcon();
     }
 
     private void onDogItemClick(Dog dog) {

@@ -40,7 +40,7 @@ public class Dog implements Serializable {
 
     @SerializedName("estado")
     @ColumnInfo(name = "status")
-    private String status; // E.g., "adopcion"
+    private String status;
 
     @SerializedName("genero")
     @ColumnInfo(name = "gender")

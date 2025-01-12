@@ -40,7 +40,19 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="end"
-            android:src="@drawable/person_icon" />
+            android:src="@drawable/person_icon"
+            android:visibility="gone"/> <!-- Invisible by default -->
+
+        <Button
+            android:id="@+id/user_button"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/menu_item_icon_color"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:layout_marginRight="4dp" />
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
