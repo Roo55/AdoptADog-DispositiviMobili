@@ -10,15 +10,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.adoptadog.R;
 import com.example.adoptadog.firebase.AuthManager;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.ui.auth.LoginActivity;
 import com.example.adoptadog.ui.details.DogDetailActivity;
+import com.example.adoptadog.database.DatabaseClient;
 import com.example.adoptadog.viewmodels.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         mainViewModel.getDogs().observe(this, dogs -> {
             if (dogs != null) {
+                new Thread(() -> DatabaseClient.getInstance(getApplicationContext()).dogDAO()).start();
                 dogAdapter = new DogAdapter(dogs, this, this::onDogItemClick);
                 dogListRecyclerView.setAdapter(dogAdapter);
             }

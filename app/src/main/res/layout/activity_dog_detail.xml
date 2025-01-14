@@ -149,26 +149,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_margin="16dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnFavorite"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginEnd="8dp"
-                app:icon="@drawable/ic_favorite_border"
-                app:iconSize="24dp"
-                app:iconGravity="textStart"
-                app:strokeColor="@color/md_theme_light_primary"
-                app:strokeWidth="1dp" />
+            <!-- Botón de Favorito eliminado -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAdopt"
                 style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
                 android:text="Adoption"
-                android:layout_marginStart="8dp" />
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

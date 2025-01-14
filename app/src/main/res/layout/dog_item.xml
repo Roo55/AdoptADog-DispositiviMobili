@@ -29,23 +29,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"/>
-
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvDogName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/lexend"
             android:text="Dog Name"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:fontFamily="@font/lexend"
-            android:layout_marginStart="16dp"
-            android:textColor="@android:color/black"
-            app:layout_constraintStart_toEndOf="@id/imageCardView"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvDogBreed"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tvDogBreed" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/imageCardView"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvDogBreed"
@@ -54,15 +54,14 @@
             android:text="Dog Breed"
             android:textSize="14sp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/lexend"
             android:textColor="@android:color/darker_gray"
             app:layout_constraintStart_toEndOf="@id/imageCardView"
             app:layout_constraintTop_toBottomOf="@id/tvDogName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tvDogAge" /> <!-- Agregamos separación entre raza y edad -->
+            app:layout_constraintBottom_toTopOf="@id/tvDogAge" />
 
-        <!-- Edad del perro -->
         <TextView
             android:id="@+id/tvDogAge"
             android:layout_width="0dp"
@@ -76,7 +75,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- ProgressBar para la imagen -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="24dp"
@@ -87,14 +85,14 @@
             app:layout_constraintStart_toStartOf="@id/imageCardView"
             app:layout_constraintEnd_toEndOf="@id/imageCardView" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/ivGenderIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="20dp"
+            android:contentDescription="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/ivGenderIcon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="300dp"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_macho" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

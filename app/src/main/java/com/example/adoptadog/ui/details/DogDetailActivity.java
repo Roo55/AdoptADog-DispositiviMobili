@@ -2,12 +2,9 @@ package com.example.adoptadog.ui.details;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
 import com.example.adoptadog.R;
 import com.example.adoptadog.database.DatabaseClient;
@@ -19,7 +16,6 @@ import com.example.adoptadog.ui.adoption.AdoptionFormActivity;
 import com.example.adoptadog.ui.auth.LoginActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
@@ -30,7 +26,7 @@ public class DogDetailActivity extends AppCompatActivity {
     private ImageView ivDogImage;
     private TextView tvDogName, tvDogPersonality, tvDogAge, tvSterilizedStatus;
     private ImageView ivGenderIcon;
-    private MaterialButton btnFavorite, btnAdopt;
+    private MaterialButton btnAdopt;
     private DogDAO dogDao;
     private Dog dog;
     private Translator translator;
@@ -50,10 +46,7 @@ public class DogDetailActivity extends AppCompatActivity {
         tvDogAge = findViewById(R.id.tvDogAge);
         ivGenderIcon = findViewById(R.id.ivGenderIcon);
         tvSterilizedStatus = findViewById(R.id.tvSterilizedStatus);
-        btnFavorite = findViewById(R.id.btnFavorite);
         btnAdopt = findViewById(R.id.btnAdopt);
-
-        btnFavorite.setEnabled(false);
 
         setupTranslator();
 
@@ -65,74 +58,57 @@ public class DogDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         dog = (Dog) intent.getSerializableExtra("dog");
 
-        if (dog == null) {
-            Log.e("DogDetailActivity", "Dog object is null in the intent!");
-            finish();
-            return;
+        if (dog != null) {
+            populateDogDetails(dog);
+            isDogLoaded = true;
         }
-
-        populateDogDetails(dog);
-        btnFavorite.setEnabled(true);
-        isDogLoaded = true;
 
         setupAdoptButtonClickListener();
     }
-
 
     private void setupAdoptButtonClickListener() {
         btnAdopt.setOnClickListener(v -> {
             if (!isUserLoggedIn()) {
                 Snackbar.make(v, "You must be logged in to adopt a dog.", Snackbar.LENGTH_LONG).show();
-
                 Intent loginIntent = new Intent(DogDetailActivity.this, LoginActivity.class);
                 loginIntent.putExtra("redirectReason", "You must be logged in to fill out the adoption form!");
                 startActivity(loginIntent);
-
             } else if (!isDogLoaded) {
                 Snackbar.make(v, "Please wait, dog data is still loading.", Snackbar.LENGTH_LONG).show();
             } else {
                 if (dog != null) {
-                    // Aquí estamos pasando el dogId al Intent
                     Intent adoptIntent = new Intent(DogDetailActivity.this, AdoptionFormActivity.class);
-                    adoptIntent.putExtra("dogId", dog.getId());  // Pasar el dogId aquí
+                    adoptIntent.putExtra("dogId", dog.getId());
                     startActivity(adoptIntent);
                 } else {
-                    Log.e("DogDetailActivity", "Dog object is null when attempting to adopt.");
                     Snackbar.make(v, "Error: Dog data not available.", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-
-
-
     private boolean isUserLoggedIn() {
         return AuthManager.getInstance().getCurrentUser() != null;
-
     }
 
     private void setupTranslator() {
-        TranslatorOptions options =
-                new TranslatorOptions.Builder()
-                        .setSourceLanguage(TranslateLanguage.SPANISH)
-                        .setTargetLanguage(TranslateLanguage.ENGLISH)
-                        .build();
+        TranslatorOptions options = new TranslatorOptions.Builder()
+                .setSourceLanguage(TranslateLanguage.SPANISH)
+                .setTargetLanguage(TranslateLanguage.ENGLISH)
+                .build();
         translator = Translation.getClient(options);
-
         translator.downloadModelIfNeeded()
-                .addOnSuccessListener(unused -> Log.d("MLKit", "Translation model downloaded"))
-                .addOnFailureListener(e -> Log.e("MLKit", "Error downloading translation model: " + e.getMessage()));
+                .addOnSuccessListener(unused -> {})
+                .addOnFailureListener(e -> {});
     }
 
     private void populateDogDetails(Dog dog) {
         if (dog == null) {
-            Log.e("DogDetailActivity", "Dog is null in populateDogDetails!");
             return;
         }
 
         tvDogName.setText(dog.getName());
-        translateText(dog.getAge(), translatedAge -> tvDogAge.setText(translatedAge)); // Traducir la edad
+        translateText(dog.getAge(), translatedAge -> tvDogAge.setText(translatedAge));
 
         Glide.with(this)
                 .load(dog.getImageUrl())
@@ -153,20 +129,6 @@ public class DogDetailActivity extends AppCompatActivity {
         }
 
         translateText(cleanHtmlTags(dog.getPersonalityDescription()), translatedText -> tvDogPersonality.setText(translatedText));
-        btnFavorite.setIconResource(dog.isFavorite() ? R.drawable.ic_favorite_border_filled : R.drawable.ic_favorite_border);
-
-        Log.d("DogDetailActivity", "Sterilized value from database: " + dog.getSterilized());
-        updateSterilizedStatus(dog.getSterilized());
-    }
-
-    private void updateSterilizedStatus(int sterilized) {
-        if (sterilized == 1) {
-            tvSterilizedStatus.setText("YES");
-            tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_yes);
-        } else {
-            tvSterilizedStatus.setText("NO");
-            tvSterilizedStatus.setBackgroundResource(R.drawable.sterilized_status_no);
-        }
     }
 
     private String cleanHtmlTags(String text) {
@@ -174,24 +136,25 @@ public class DogDetailActivity extends AppCompatActivity {
         return text.replaceAll("<p>", "").replaceAll("</p>", "").trim();
     }
 
-    private void translateText(String text, OnTranslationCompleteListener listener) {
-        if (text == null || text.isEmpty()) {
-            listener.onTranslationComplete("");
-            return;
+    private void translateText(String text, TranslationCallback callback) {
+        if (translator != null && text != null && !text.isEmpty()) {
+            translator.translate(text)
+                    .addOnSuccessListener(callback::onTranslationCompleted)
+                    .addOnFailureListener(e -> {});
+        } else {
+            callback.onTranslationCompleted(text);
         }
-
-        translator.translate(text)
-                .addOnSuccessListener(translatedText -> {
-                    Log.d("MLKit", "Translation successful: " + translatedText);
-                    listener.onTranslationComplete(translatedText);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("MLKit", "Translation failed: " + e.getMessage());
-                    listener.onTranslationComplete(text);
-                });
     }
 
-    interface OnTranslationCompleteListener {
-        void onTranslationComplete(String translatedText);
+    @Override
+    protected void onDestroy() {
+        if (translator != null) {
+            translator.close();
+        }
+        super.onDestroy();
+    }
+
+    private interface TranslationCallback {
+        void onTranslationCompleted(String translatedText);
     }
 }

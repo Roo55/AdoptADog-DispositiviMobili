@@ -32,10 +32,13 @@ public class DogRepository {
             @Override
             public void onSuccess(List<Dog> dogs) {
                 new Thread(() -> {
-                    for (Dog dog : dogs) {
-                        dogDAO.deleteDog(dog.getId());
-                        dogDAO.insertDog(dog);
-                        Log.d("DogRepository", "Dog inserted: " + dog.getName());
+                    for (Dog dogFromApi : dogs) {
+                        Dog existingDog = dogDAO.getDogById(dogFromApi.getId());
+                        if (existingDog != null) {
+                            dogDAO.updateDog(dogFromApi); //
+                        } else {
+                            dogDAO.insertDog(dogFromApi); //
+                        }
                     }
                 }).start();
             }

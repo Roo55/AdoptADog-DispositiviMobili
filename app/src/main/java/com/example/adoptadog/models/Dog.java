@@ -70,13 +70,9 @@ public class Dog implements Serializable {
     @ColumnInfo(name = "details_url")
     private String detailsUrl;
 
-    @ColumnInfo(name = "isFavorite")
-    private boolean isFavorite;
-
-
     public Dog(int id, String name, String type, String color, String age, String status,
                String gender, String physicalDescription, String personalityDescription,
-               String imageUrl, String region, String comuna, String detailsUrl,int sterilized, boolean isFavorite) {
+               String imageUrl, String region, String comuna, String detailsUrl, int sterilized) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -90,10 +86,8 @@ public class Dog implements Serializable {
         this.region = region;
         this.comuna = comuna;
         this.detailsUrl = detailsUrl;
-        this.isFavorite = isFavorite;
         this.sterilized = sterilized;
     }
-
 
     @NonNull
     public int getId() {
@@ -206,13 +200,5 @@ public class Dog implements Serializable {
 
     public void setDetailsUrl(String detailsUrl) {
         this.detailsUrl = detailsUrl;
-    }
-
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
     }
 }

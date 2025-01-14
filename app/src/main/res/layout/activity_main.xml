@@ -41,7 +41,7 @@
             android:layout_height="48dp"
             android:layout_gravity="end"
             android:src="@drawable/person_icon"
-            android:visibility="gone"/> <!-- Invisible by default -->
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/user_button"
