@@ -24,7 +24,6 @@ import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
 import com.google.mlkit.nl.translate.TranslatorOptions;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,10 +82,12 @@ public class DogDetailActivity extends AppCompatActivity {
     private void setupAdoptButtonClickListener() {
         btnAdopt.setOnClickListener(v -> {
             if (!isUserLoggedIn()) {
-                Snackbar.make(v, "You must be logged in to adopt a dog.", Snackbar.LENGTH_LONG).show();
-                Intent loginIntent = new Intent(DogDetailActivity.this, LoginActivity.class);
-                loginIntent.putExtra("redirectReason", "You must be logged in to fill out the adoption form!");
-                startActivity(loginIntent);
+                Snackbar.make(v, "You must be logged in to fill the dog adoption form.", Snackbar.LENGTH_LONG).show();
+                new Handler().postDelayed(() -> {
+                    Intent loginIntent = new Intent(DogDetailActivity.this, LoginActivity.class);
+                    loginIntent.putExtra("redirectReason", "You must be logged in to fill out the adoption form!");
+                    startActivity(loginIntent);
+                }, 2000);
             } else if (!isDogLoaded) {
                 Snackbar.make(v, "Please wait, dog data is still loading.", Snackbar.LENGTH_LONG).show();
             } else {
@@ -180,7 +181,6 @@ public class DogDetailActivity extends AppCompatActivity {
         }
         return allTraits.subList(0, Math.min(count, allTraits.size()));
     }
-
 
     private void showTraitsWithAnimation(List<String> traits) {
         traitsContainer.removeAllViews();
