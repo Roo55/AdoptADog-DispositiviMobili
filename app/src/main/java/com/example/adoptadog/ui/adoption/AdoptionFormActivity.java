@@ -23,8 +23,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AdoptionFormActivity extends AppCompatActivity {
 
@@ -39,6 +42,7 @@ public class AdoptionFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_adoption_form);
 
         int dogId = getIntent().getIntExtra("dogId", -1);
+        String dogName = getIntent().getStringExtra("dogName");
 
         etFullName = findViewById(R.id.etFullName);
         etEmail = findViewById(R.id.etEmail);
@@ -56,7 +60,7 @@ public class AdoptionFormActivity extends AppCompatActivity {
 
         btnSubmitForm.setOnClickListener(v -> {
             if (validateForm()) {
-                saveFormToDatabase(dogId);
+                saveFormToDatabase(dogId,dogName);
             } else {
                 Snackbar.make(v, "Please fill all the required fields.", Snackbar.LENGTH_SHORT).show();
             }
@@ -169,7 +173,7 @@ public class AdoptionFormActivity extends AppCompatActivity {
         return true;
     }
 
-    private void saveFormToDatabase(int dogId) {
+    private void saveFormToDatabase(int dogId, String dogName) {
         String fullName = etFullName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String phone = etPhone.getText().toString().trim();
@@ -177,7 +181,7 @@ public class AdoptionFormActivity extends AppCompatActivity {
         String address = etAddress.getText().toString().trim();
         String comments = etComments.getText() != null ? etComments.getText().toString().trim() : "";
 
-        AdoptionForm adoptionForm = new AdoptionForm(fullName, email, countryCode + phone, address, comments, dogId);
+        AdoptionForm adoptionForm = new AdoptionForm(fullName, email, countryCode + phone, address, comments, dogId, dogName);
 
         new Thread(() -> {
             try {
@@ -200,7 +204,6 @@ public class AdoptionFormActivity extends AppCompatActivity {
         }).start();
     }
 
-
     private void syncFormWithFirebase(AdoptionForm form) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -209,10 +212,12 @@ public class AdoptionFormActivity extends AppCompatActivity {
         }
 
         String userId = user.getUid();
+        String currentDate = new SimpleDateFormat("ddMMyyyy_HHmmss", Locale.getDefault()).format(new Date());
+
         FirebaseDatabase.getInstance()
                 .getReference("adoption_forms")
                 .child(userId)
-                .push()
+                .child(currentDate)
                 .setValue(form)
                 .addOnSuccessListener(aVoid -> Log.d("AdoptionFormActivity", "Form synced with Firebase"))
                 .addOnFailureListener(e -> Log.e("AdoptionFormActivity", "Failed to sync with Firebase: " + e.getMessage()));

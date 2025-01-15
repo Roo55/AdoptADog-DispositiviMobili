@@ -2,7 +2,11 @@ package com.example.adoptadog.ui.details;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
@@ -21,6 +25,14 @@ import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
 import com.google.mlkit.nl.translate.TranslatorOptions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.google.android.flexbox.FlexboxLayout;
+
 public class DogDetailActivity extends AppCompatActivity {
 
     private ImageView ivDogImage;
@@ -31,6 +43,7 @@ public class DogDetailActivity extends AppCompatActivity {
     private Dog dog;
     private Translator translator;
     private boolean isDogLoaded = false;
+    private FlexboxLayout traitsContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +60,7 @@ public class DogDetailActivity extends AppCompatActivity {
         ivGenderIcon = findViewById(R.id.ivGenderIcon);
         tvSterilizedStatus = findViewById(R.id.tvSterilizedStatus);
         btnAdopt = findViewById(R.id.btnAdopt);
+        traitsContainer = findViewById(R.id.traitsContainer);
 
         setupTranslator();
 
@@ -79,6 +93,7 @@ public class DogDetailActivity extends AppCompatActivity {
                 if (dog != null) {
                     Intent adoptIntent = new Intent(DogDetailActivity.this, AdoptionFormActivity.class);
                     adoptIntent.putExtra("dogId", dog.getId());
+                    adoptIntent.putExtra("dogName", dog.getName());
                     startActivity(adoptIntent);
                 } else {
                     Snackbar.make(v, "Error: Dog data not available.", Snackbar.LENGTH_LONG).show();
@@ -129,6 +144,69 @@ public class DogDetailActivity extends AppCompatActivity {
         }
 
         translateText(cleanHtmlTags(dog.getPersonalityDescription()), translatedText -> tvDogPersonality.setText(translatedText));
+
+        List<String> randomTraits = getFilteredTraits(4);
+        showTraitsWithAnimation(randomTraits);
+    }
+
+    private List<String> getMockTraits() {
+        return Arrays.asList(
+                "Euphoric", "Friendly", "Timid", "Destructive",
+                "Loyal", "Playful", "Independent", "Energetic",
+                "Obedient", "Protective", "Affectionate", "Gentle",
+                "Clever", "Quiet", "Curious", "Sociable",
+                "Alert", "Lazy", "Cuddly", "Adventurous"
+        );
+    }
+
+    private Map<String, String> getContradictoryTraits() {
+        Map<String, String> contradictoryPairs = new HashMap<>();
+        contradictoryPairs.put("Timid", "Sociable");
+        contradictoryPairs.put("Gentle", "Destructive");
+        contradictoryPairs.put("Quiet", "Energetic");
+        contradictoryPairs.put("Independent", "Cuddly");
+        return contradictoryPairs;
+    }
+
+    private List<String> getFilteredTraits(int count) {
+        List<String> allTraits = new ArrayList<>(getMockTraits());
+        Collections.shuffle(allTraits);
+        Map<String, String> contradictoryPairs = getContradictoryTraits();
+        for (int i = 0; i < allTraits.size(); i++) {
+            String trait = allTraits.get(i);
+            if (contradictoryPairs.containsKey(trait)) {
+                allTraits.removeIf(t -> t.equals(contradictoryPairs.get(trait)));
+            }
+        }
+        return allTraits.subList(0, Math.min(count, allTraits.size()));
+    }
+
+
+    private void showTraitsWithAnimation(List<String> traits) {
+        traitsContainer.removeAllViews();
+
+        Handler handler = new Handler();
+        long delay = 500;
+
+        for (int i = 0; i < traits.size(); i++) {
+            int index = i;
+            handler.postDelayed(() -> {
+                View chip = LayoutInflater.from(this).inflate(R.layout.item_trait_chip, traitsContainer, false);
+                TextView tvTrait = chip.findViewById(R.id.tvTrait);
+                tvTrait.setText(traits.get(index));
+                traitsContainer.addView(chip);
+
+                chip.setScaleX(0f);
+                chip.setScaleY(0f);
+                chip.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(300)
+                        .start();
+            }, delay);
+
+            delay += 200;
+        }
     }
 
     private String cleanHtmlTags(String text) {

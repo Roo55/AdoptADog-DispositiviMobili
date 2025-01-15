@@ -68,6 +68,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.1.0")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.firebase:firebase-database:20.0.5")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
 
     ksp("androidx.room:room-compiler:2.6.1")
 

@@ -15,15 +15,17 @@ public class AdoptionForm {
     private String address;
     private String comments;
     private int dogId;
+    private String dogName;
 
     // Constructor
-    public AdoptionForm(String fullName, String email, String phone, String address, String comments, int dogId) {
+    public AdoptionForm(String fullName, String email, String phone, String address, String comments, int dogId,String dogName) {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
         this.address = address;
         this.comments = comments;
         this.dogId = dogId;
+        this.dogName = dogName;
     }
 
     public int getId() {
@@ -82,6 +84,14 @@ public class AdoptionForm {
         this.dogId = dogId;
     }
 
+    public String getDogName() {
+        return dogName;
+    }
+
+    public void setDogName(String dogName) {
+        this.dogName = dogName;
+    }
+
     @Override
     public String toString() {
         return "AdoptionForm{" +
@@ -92,6 +102,7 @@ public class AdoptionForm {
                 ", address='" + address + '\'' +
                 ", comments='" + comments + '\'' +
                 ", dogId=" + dogId +
+                ", dogName='" + dogName + '\'' +
                 '}';
     }
 }

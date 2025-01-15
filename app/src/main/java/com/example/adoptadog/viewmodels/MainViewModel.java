@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.adoptadog.api.ApiClient;
 import com.example.adoptadog.models.Dog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
@@ -35,10 +36,16 @@ public class MainViewModel extends AndroidViewModel {
         ApiClient.fetchDogsFromApi(new ApiClient.ApiCallback() {
             @Override
             public void onSuccess(List<Dog> dogs) {
-                List<Dog> limitedDogs = dogs.size() > 10 ? dogs.subList(0, 10) : dogs; //Only get 10 dogs
 
+                List<Dog> filteredDogs = new ArrayList<>();
+                for (Dog dog : dogs) {
+                    if (dog != null && !dog.getName().equalsIgnoreCase("Popeye") && !dog.getName().equalsIgnoreCase("Karey")) {
+                        filteredDogs.add(dog);
+                    }
+                }
+
+                List<Dog> limitedDogs = filteredDogs.size() > 20 ? filteredDogs.subList(0, 20) : filteredDogs;
                 dogsLiveData.postValue(limitedDogs);
-
             }
 
             @Override
@@ -47,4 +54,6 @@ public class MainViewModel extends AndroidViewModel {
             }
         });
     }
+
+
 }

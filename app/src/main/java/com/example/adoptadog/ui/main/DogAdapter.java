@@ -90,6 +90,12 @@ public class DogAdapter extends RecyclerView.Adapter<DogAdapter.DogViewHolder> {
         return dogList.size();
     }
 
+    public void updateDogs(List<Dog> newDogs) {
+        this.dogList = newDogs;
+        notifyDataSetChanged();
+    }
+
+
     private void setupTranslator() {
         TranslatorOptions options = new TranslatorOptions.Builder()
                 .setSourceLanguage(TranslateLanguage.SPANISH)

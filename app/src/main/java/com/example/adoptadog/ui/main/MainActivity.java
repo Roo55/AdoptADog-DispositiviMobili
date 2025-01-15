@@ -8,7 +8,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,10 @@ import com.example.adoptadog.ui.auth.LoginActivity;
 import com.example.adoptadog.ui.details.DogDetailActivity;
 import com.example.adoptadog.database.DatabaseClient;
 import com.example.adoptadog.viewmodels.MainViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel mainViewModel;
     private Button userButton;
     private ImageView userIcon;
+    private ImageView appLogo;
+    private Spinner genderFilter;
+    private Spinner ageFilter;
+    private Button applyFilterButton;
+    private FloatingActionButton fabFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +51,14 @@ public class MainActivity extends AppCompatActivity {
         userButton = findViewById(R.id.user_button);
         userIcon = findViewById(R.id.user_icon);
         dogListRecyclerView = findViewById(R.id.dogList);
+        appLogo = findViewById(R.id.app_logo);
+        genderFilter = findViewById(R.id.gender_filter);
+        ageFilter = findViewById(R.id.age_filter);
+        applyFilterButton = findViewById(R.id.apply_filter_button);
+        fabFilter = findViewById(R.id.fab_filter);
+
+        LinearLayout filterLayout = findViewById(R.id.filter_layout);
+        filterLayout.setVisibility(View.GONE);
 
         updateUserIcon();
 
@@ -62,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mainViewModel.fetchDogsFromApi();
+
+        applyFilterButton.setOnClickListener(v -> applyFilters());
+
+        fabFilter.setOnClickListener(v -> toggleFilterVisibility());
+
+        appLogo.setOnClickListener(v -> dogListRecyclerView.smoothScrollToPosition(0));
     }
 
     private void updateUserIcon() {
@@ -109,6 +134,48 @@ public class MainActivity extends AppCompatActivity {
         updateUserIcon();
     }
 
+    private void applyFilters() {
+        String selectedGender = genderFilter.getSelectedItem().toString();
+        String selectedAge = ageFilter.getSelectedItem().toString();
+
+        mainViewModel.getDogs().observe(this, dogs -> {
+            if (dogs != null) {
+                List<Dog> filteredDogs = new ArrayList<>(dogs);
+
+                if (!selectedGender.equals("All")) {
+                    String genderFilterValue = selectedGender.equals("Male") ? "macho" : "hembra";
+                    filteredDogs.removeIf(dog -> !dog.getGender().equalsIgnoreCase(genderFilterValue));
+                }
+
+                if (!selectedAge.equals("All")) {
+                    filteredDogs.removeIf(dog -> {
+                        int dogAgeInMonths = parseAgeToMonths(dog.getAge());
+                        switch (selectedAge) {
+                            case "Less than 1 year":
+                                return dogAgeInMonths >= 12;
+                            case "Between 1 and 5 years":
+                                return dogAgeInMonths < 12 || dogAgeInMonths > 60;
+                            case "Over 5 years":
+                                return dogAgeInMonths <= 60;
+                        }
+                        return false;
+                    });
+                }
+
+                dogAdapter.updateDogs(filteredDogs);
+            }
+        });
+    }
+
+    private int parseAgeToMonths(String edad) {
+        if (edad.contains("Mes")) {
+            return Integer.parseInt(edad.split(" ")[0]);
+        } else if (edad.contains("Año")) {
+            return Integer.parseInt(edad.split(" ")[0]) * 12;
+        }
+        return 0;
+    }
+
     private void onDogItemClick(Dog dog) {
         if (dog.getId() != -1) {
             Intent intent = new Intent(MainActivity.this, DogDetailActivity.class);
@@ -116,6 +183,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             Toast.makeText(MainActivity.this, "Error: Invalid Dog ID", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void toggleFilterVisibility() {
+        LinearLayout filterLayout = findViewById(R.id.filter_layout);
+        if (filterLayout.getVisibility() == View.VISIBLE) {
+            filterLayout.setVisibility(View.GONE);
+        } else {
+            filterLayout.setVisibility(View.VISIBLE); //
         }
     }
 }

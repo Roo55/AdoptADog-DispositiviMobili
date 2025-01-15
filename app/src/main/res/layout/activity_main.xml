@@ -21,7 +21,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@mipmap/ic_launcher"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
 
             <ImageView
                 android:id="@+id/app_logo"
-                android:layout_width="300dp"
+                android:layout_width="280dp"
                 android:layout_height="48dp"
                 android:src="@drawable/adoptadoglogo" />
         </FrameLayout>
@@ -41,19 +41,58 @@
             android:layout_height="48dp"
             android:layout_gravity="end"
             android:src="@drawable/person_icon"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/user_button"
             android:layout_width="75dp"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="@string/login_button"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/menu_item_icon_color"
             android:layout_gravity="end"
             android:padding="10dp"
-            android:layout_marginRight="4dp" />
+            android:layout_marginEnd="4dp" />
     </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/filter_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_vertical">
+
+        <Spinner
+            android:id="@+id/gender_filter"
+            style="@style/SpinnerStyle"
+            android:backgroundTint="@color/menu_item_icon_color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:entries="@array/gender_options" />
+
+        <Spinner
+            android:id="@+id/age_filter"
+            style="@style/SpinnerStyle"
+            android:backgroundTint="@color/menu_item_icon_color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:entries="@array/age_options" />
+
+        <Button
+            android:id="@+id/apply_filter_button"
+            style="@style/ButtonStyle"
+            android:text="@string/apply_filters_button"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dogList"
@@ -62,10 +101,21 @@
         android:orientation="vertical"
         tools:listitem="@layout/dog_item"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/filter_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_filter"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:contentDescription="@string/fab_filter_description"
+        android:tint="@android:color/white"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

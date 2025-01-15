@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Botón de regresar -->
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="32dp"
@@ -19,37 +20,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/app_icon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@mipmap/ic_launcher"
-            android:layout_marginBottom="8dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_background"
-            app:layout_constraintTop_toBottomOf="@id/btnBack"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ImageView
-            android:id="@+id/ivAppLogo"
-            android:layout_width="300dp"
-            android:layout_height="48dp"
-            android:src="@drawable/adoptadoglogo"
-            app:layout_constraintTop_toBottomOf="@id/app_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" />
-
+        <!-- Imagen del perro -->
         <ImageView
             android:id="@+id/ivDogImage"
             android:layout_width="0dp"
             android:layout_height="300dp"
             android:scaleType="centerCrop"
-            app:layout_constraintTop_toBottomOf="@id/ivAppLogo"
+            app:layout_constraintTop_toBottomOf="@id/btnBack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Información del perro -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardDogInfo"
             android:layout_width="0dp"
@@ -73,7 +54,7 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <com.google.android.material.textview.MaterialTextView
+                    <TextView
                         android:id="@+id/tvDogName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -117,7 +98,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <com.google.android.material.textview.MaterialTextView
+                <TextView
                     android:id="@+id/tvDogAge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -126,39 +107,36 @@
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="4dp" />
 
-                <com.google.android.material.textview.MaterialTextView
+                <TextView
                     android:id="@+id/tvDogPersonality"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Friendly and energetic, loves running and playing around."
+                    android:text="Friendly and energetic"
                     android:textSize="14sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:id="@+id/buttonsLayout"
-            android:layout_width="0dp"
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/traitsContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
+            android:layout_margin="16dp"
             app:layout_constraintTop_toBottomOf="@id/cardDogInfo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_margin="16dp">
+            android:visibility="visible" />
 
-            <!-- Botón de Favorito eliminado -->
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAdopt"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="Adoption"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" />
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAdopt"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:text="Adopt Me!"
+            app:layout_constraintTop_toBottomOf="@id/traitsContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="16dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

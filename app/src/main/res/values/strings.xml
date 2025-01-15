@@ -5,4 +5,20 @@
     <string name="thank_you_message">Thank you for collaborating with dog adoption!</string>
     <string name="follow_up_message">Would you like to go back to the main view to see more dogs?</string>
     <string name="return_to_main_button">See more dogs</string>
+    <string name="login_button">Login</string>
+    <string name="apply_filters_button">Apply Filters</string>
+    <string name="fab_filter_description">Toggle filters visibility</string>
+
+    <string-array name="gender_options">
+        <item>All</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="age_options">
+        <item>All</item>
+        <item>Less than 1 year</item>
+        <item>Between 1 and 5 years</item>
+        <item>Over 5 years</item>
+    </string-array>
 </resources>

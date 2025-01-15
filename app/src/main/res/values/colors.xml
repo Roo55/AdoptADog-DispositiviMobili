@@ -24,6 +24,7 @@
     <color name="menu_background_color">#FFFFFF</color>
     <color name="menu_background_hover_color">#E0E0E0</color>
     <color name="red">#FF0000</color>
+    <color name="button_color">#FF6200EE</color>
 
 
 

@@ -35,9 +35,9 @@ public class DogRepository {
                     for (Dog dogFromApi : dogs) {
                         Dog existingDog = dogDAO.getDogById(dogFromApi.getId());
                         if (existingDog != null) {
-                            dogDAO.updateDog(dogFromApi); //
+                            dogDAO.updateDog(dogFromApi);
                         } else {
-                            dogDAO.insertDog(dogFromApi); //
+                            dogDAO.insertDog(dogFromApi);
                         }
                     }
                 }).start();
