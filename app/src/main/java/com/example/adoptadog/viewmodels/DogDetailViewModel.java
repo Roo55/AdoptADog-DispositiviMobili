@@ -55,6 +55,19 @@ public class DogDetailViewModel extends AndroidViewModel {
         return sterilizedStatus;
     }
 
+    public LiveData<String> getTranslatedAndCleanedDescription(String description) {
+        MutableLiveData<String> result = new MutableLiveData<>();
+        if (description != null && !description.isEmpty()) {
+            String cleanedDescription = description.replaceAll("<p>", "").replaceAll("</p>", "");
+            translator.translate(cleanedDescription).addOnSuccessListener(result::setValue);
+        } else {
+            result.setValue(description);
+        }
+        return result;
+    }
+
+
+
     @Override
     protected void onCleared() {
         super.onCleared();

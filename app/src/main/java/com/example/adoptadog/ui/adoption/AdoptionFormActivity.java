@@ -11,11 +11,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.adoptadog.R;
 import com.example.adoptadog.database.AdoptionDAO;
 import com.example.adoptadog.database.DatabaseClient;
 import com.example.adoptadog.models.AdoptionForm;
+import com.example.adoptadog.viewmodels.AdoptionFormViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -35,6 +37,7 @@ public class AdoptionFormActivity extends AppCompatActivity {
     private Spinner spCountryCode;
     private MaterialButton btnSubmitForm;
     private AdoptionDAO adoptionDao;
+    private AdoptionFormViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class AdoptionFormActivity extends AppCompatActivity {
         btnSubmitForm = findViewById(R.id.btnSubmitForm);
 
         adoptionDao = DatabaseClient.getInstance(getApplicationContext()).adoptionDAO();
+        viewModel = new ViewModelProvider(this).get(AdoptionFormViewModel.class);
 
         populateUserEmail();
         setupCountryCodeSpinner();
@@ -60,9 +64,17 @@ public class AdoptionFormActivity extends AppCompatActivity {
 
         btnSubmitForm.setOnClickListener(v -> {
             if (validateForm()) {
-                saveFormToDatabase(dogId,dogName);
+                saveFormToDatabase(dogId, dogName);
             } else {
                 Snackbar.make(v, "Please fill all the required fields.", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.getPhoneError().observe(this, errorMessage -> {
+            if (errorMessage != null) {
+                etPhone.setError(errorMessage);
+            } else {
+                etPhone.setError(null);
             }
         });
     }
@@ -87,60 +99,11 @@ public class AdoptionFormActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                validatePhoneNumber();
+                String phoneNumber = s.toString().trim();
+                String countryCode = spCountryCode.getSelectedItem().toString();
+                viewModel.validatePhoneNumber(phoneNumber, countryCode);
             }
         });
-    }
-
-    private void validatePhoneNumber() {
-        String selectedCode = spCountryCode.getSelectedItem().toString();
-        String phoneNumber = etPhone.getText().toString().trim();
-
-        switch (selectedCode) {
-            case "+1 (US)":
-                if (phoneNumber.length() != 10) {
-                    etPhone.setError("Phone number must be 10 digits for US");
-                } else if (!phoneNumber.matches("\\d+")) {
-                    etPhone.setError("Phone number must contain only digits");
-                } else {
-                    etPhone.setError(null);
-                }
-                break;
-
-            case "+44 (GB)":
-                if (phoneNumber.length() < 10 || phoneNumber.length() > 11) {
-                    etPhone.setError("Phone number must be 10 or 11 digits for UK");
-                } else if (!phoneNumber.matches("\\d+")) {
-                    etPhone.setError("Phone number must contain only digits");
-                } else {
-                    etPhone.setError(null);
-                }
-                break;
-
-            case "+34 (ES)":
-                if (phoneNumber.length() != 9) {
-                    etPhone.setError("Phone number must be 9 digits for Spain");
-                } else if (!phoneNumber.matches("\\d+")) {
-                    etPhone.setError("Phone number must contain only digits");
-                } else {
-                    etPhone.setError(null);
-                }
-                break;
-
-            case "+49 (DE)":
-                if (phoneNumber.length() != 11) {
-                    etPhone.setError("Phone number must be 11 digits for Germany");
-                } else if (!phoneNumber.matches("\\d+")) {
-                    etPhone.setError("Phone number must contain only digits");
-                } else {
-                    etPhone.setError(null);
-                }
-                break;
-
-            default:
-                etPhone.setError(null);
-                break;
-        }
     }
 
     private void populateUserEmail() {

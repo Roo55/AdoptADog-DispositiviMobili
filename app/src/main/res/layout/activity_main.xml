@@ -71,9 +71,8 @@
         <Spinner
             android:id="@+id/gender_filter"
             style="@style/SpinnerStyle"
-            android:backgroundTint="@color/menu_item_icon_color"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:entries="@array/gender_options" />
@@ -81,9 +80,8 @@
         <Spinner
             android:id="@+id/age_filter"
             style="@style/SpinnerStyle"
-            android:backgroundTint="@color/menu_item_icon_color"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:entries="@array/age_options" />
 
@@ -91,8 +89,11 @@
             android:id="@+id/apply_filter_button"
             style="@style/ButtonStyle"
             android:text="@string/apply_filters_button"
-            android:layout_marginStart="8dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+        android:layout_marginStart="8dp" />
     </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dogList"

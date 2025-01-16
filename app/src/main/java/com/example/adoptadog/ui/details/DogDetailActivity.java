@@ -7,15 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.adoptadog.R;
 import com.example.adoptadog.models.Dog;
 import com.example.adoptadog.ui.adoption.AdoptionFormActivity;
+import com.example.adoptadog.ui.auth.LoginActivity;
 import com.example.adoptadog.viewmodels.DogDetailViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.List;
 
 public class DogDetailActivity extends AppCompatActivity {
@@ -72,21 +77,36 @@ public class DogDetailActivity extends AppCompatActivity {
 
         ivGenderIcon.setImageResource("macho".equalsIgnoreCase(dog.getGender()) ? R.drawable.ic_macho : R.drawable.ic_hembra);
 
-        tvSterilizedStatus.setText(dog.getSterilized() == 1 ? "YES" : "NO");
-        tvSterilizedStatus.setBackgroundResource(dog.getSterilized() == 1 ? R.drawable.sterilized_status_yes : R.drawable.sterilized_status_no);
+        viewModel.getSterilizedStatus(dog).observe(this, status -> {
+            tvSterilizedStatus.setText(status);
+            tvSterilizedStatus.setBackgroundResource("YES".equals(status)
+                    ? R.drawable.sterilized_status_yes
+                    : R.drawable.sterilized_status_no);
+        });
 
-        viewModel.translateText(dog.getPersonalityDescription()).observe(this, tvDogPersonality::setText);
+        viewModel.getTranslatedAndCleanedDescription(dog.getPersonalityDescription())
+                .observe(this, tvDogPersonality::setText);
 
         viewModel.getRandomTraits(4).observe(this, this::showTraitsWithAnimation);
     }
 
+
+
     private void setupAdoptButtonClickListener() {
         btnAdopt.setOnClickListener(v -> {
             if (dog != null) {
-                Intent adoptIntent = new Intent(DogDetailActivity.this, AdoptionFormActivity.class);
-                adoptIntent.putExtra("dogId", dog.getId());
-                adoptIntent.putExtra("dogName", dog.getName());
-                startActivity(adoptIntent);
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    Intent adoptIntent = new Intent(DogDetailActivity.this, AdoptionFormActivity.class);
+                    adoptIntent.putExtra("dogId", dog.getId());
+                    adoptIntent.putExtra("dogName", dog.getName());
+                    startActivity(adoptIntent);
+                } else {
+                    Toast.makeText(DogDetailActivity.this, "You need to be registered to fill the adoption form", Toast.LENGTH_LONG).show();
+                    new Handler().postDelayed(() -> {
+                        Intent loginIntent = new Intent(DogDetailActivity.this, LoginActivity.class);
+                        startActivity(loginIntent);
+                    }, 3000);
+                }
             }
         });
     }

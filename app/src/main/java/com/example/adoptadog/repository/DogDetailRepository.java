@@ -25,4 +25,11 @@ public class DogDetailRepository {
     public String getSterilizedStatus(Dog dog) {
         return dog.getSterilized() == 1 ? "YES" : "NO";
     }
+
+    public String cleanDescription(String description) {
+        if (description == null) {
+            return "";
+        }
+        return description.replaceAll("<p>", "").replaceAll("</p>", "");
+    }
 }

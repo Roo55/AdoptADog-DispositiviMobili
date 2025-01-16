@@ -8,13 +8,40 @@
     <string name="login_button">Login</string>
     <string name="apply_filters_button">Apply Filters</string>
     <string name="fab_filter_description">Toggle filters visibility</string>
+    <string name="account_title">Your AdoptADog Account</string>
+    <string name="name_prefix">Name:</string>
+    <string name="email_prefix">Email:</string>
+    <string name="password_placeholder">Password: ********</string>
+    <string name="delete_account_button">Delete my account</string>
+    <string name="adoption_form_title">Adoption Form</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="email_address_hint">Email Address</string>
+    <string name="phone_number_hint">Phone Number</string>
+    <string name="address_hint">Address</string>
+    <string name="additional_comments_hint">Additional Comments</string>
+    <string name="submit_button">Submit</string>
+    <string name="register_title">Create an Account</string>
+    <string name="name_hint">Name</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="register_button">Register</string>
+    <string name="redirect_to_login">Already have an account? Login</string>
+    <string name="redirect_to_register">Dont have an account? Sign up</string>
+    <string name="login_title">Welcome Back!</string>
+
+    <string name="dog_name">Dog Name</string>
+    <string name="sterilized_label">Sterilized</string>
+    <string name="sterilized_status">YES</string>
+    <string name="dog_age">2 years old</string>
+    <string name="dog_personality">Friendly and energetic</string>
+    <string name="adopt_me_button">Adopt Me!</string>
 
     <string-array name="gender_options">
         <item>All</item>
         <item>Male</item>
         <item>Female</item>
     </string-array>
-
     <string-array name="age_options">
         <item>All</item>
         <item>Less than 1 year</item>

@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Botón de regresar -->
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="32dp"
@@ -20,7 +19,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Imagen del perro -->
         <ImageView
             android:id="@+id/ivDogImage"
             android:layout_width="0dp"
@@ -30,7 +28,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Información del perro -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardDogInfo"
             android:layout_width="0dp"
@@ -58,7 +55,7 @@
                         android:id="@+id/tvDogName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Dog Name"
+                        android:text="@string/dog_name"
                         android:textStyle="bold"
                         android:textSize="24sp"
                         android:textColor="@android:color/black" />
@@ -81,7 +78,7 @@
                             android:id="@+id/tvSterilizedLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sterilized"
+                            android:text="@string/sterilized_label"
                             android:textSize="14sp"
                             android:textColor="@android:color/darker_gray"
                             android:layout_marginEnd="8dp" />
@@ -91,7 +88,7 @@
                             android:layout_width="40dp"
                             android:layout_height="24dp"
                             android:gravity="center"
-                            android:text="YES"
+                            android:text="@string/sterilized_status"
                             android:textColor="@android:color/white"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -102,7 +99,7 @@
                     android:id="@+id/tvDogAge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2 years old"
+                    android:text="@string/dog_age"
                     android:textSize="16sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="4dp" />
@@ -111,7 +108,7 @@
                     android:id="@+id/tvDogPersonality"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Friendly and energetic"
+                    android:text="@string/dog_personality"
                     android:textSize="14sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="8dp" />
@@ -133,7 +130,7 @@
             android:id="@+id/btnAdopt"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:text="Adopt Me!"
+            android:text="@string/adopt_me_button"
             app:layout_constraintTop_toBottomOf="@id/traitsContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
